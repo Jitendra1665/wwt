@@ -70,7 +70,7 @@
   		<repository>
    			<id>internal.repo</id>
     		<name>Internal Repository</name>
-    		<url></url>
+    		<url>git@github.com:Jitendra1665/wwt.git</url>
   		</repository>
 	</distributionManagement>
 	
