@@ -1,0 +1,284 @@
+/*******************************
+ * Purpose: PageObject for Line Actions
+ * Created by: Srinivas/Jitendra
+ * Created on: Sep-4-2013
+ ******************************/
+package com.wwt.scm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class LineActions {
+
+	protected final WebDriver driver;
+	
+	@FindBy(css="div.span4 div.btn-group button.btn")
+	private List<WebElement> buttonslist;
+	
+	//@FindBy(css="html#ng-app.ng-scope body div#snp-site-wrapper div#wrapper div#content-main div#contractResults.ng-scope div.ng-scope div#result-navigation.row-fluid div.span4 div.actions-dropdown button.btn")
+	@FindBy(css="div.span4 div.actions-dropdown button.btn")
+	private WebElement contractsActiondroppdown;
+	
+	//@FindBy(css="html#ng-app.ng-scope body div#snp-site-wrapper div#wrapper div#content-main div#lineResults.ng-scope div.ng-scope div#result-navigation.row-fluid div.span4 div.actions-dropdown button.btn")
+	@FindBy(css="div.span4 div.actions-dropdown button.btn")
+	private WebElement linesActiondroppdown;
+	
+	@FindBy(css="div[class='actions-dropdown pull-right btn-group open'] ul[class='dropdown-menu'] li a")
+	private List<WebElement> actionmenuitems;
+	
+	//@FindBy(css="div#linesTable.ng-scope div.status-column div.status span")
+	@FindBy(css="div#linesTable.ng-scope div.pull-left div.lines-cell i.icon-large")
+	private List<WebElement> statusicons;
+
+	//@FindBy(css="div[class*='check-box-column'] div[class*='check-box lines-cell ng-scope'] input[type='checkbox'][ng-click]")
+	@FindBy(css="div#linesTable.ng-scope div.pull-left div.lines-cell input")
+	private List<WebElement> linecheckboxes;	
+	
+	@FindBy(css="input[id='siteSearchInput']")
+	private WebElement siteserachInput;		
+	
+	@FindBy(css="table#siteSearchTable.table tbody tr#siteSearchResultsTableAlign.ng-scope td.siteMove-siteCountry")
+	private List<WebElement> movecountryList;
+	
+	@FindBy(css="table#siteSearchTable.table tbody tr#siteSearchResultsTableAlign.ng-scope td.siteMove-siteMove button#siteMoveButton.btn")
+	private List<WebElement> movebuttonlist;
+	
+	@FindBy(css="div#successHeroPadding.hero-unit div.span6 h2.text-success")
+	private WebElement successvalidationMsg;
+	
+	@FindBy(css="div#successHeroPadding.hero-unit div.span6 p a.btn")
+	private List<WebElement> movestatusButtonsList;
+	
+	@FindBy(css="div.span2 address.ng-binding")
+	private WebElement currentsiteAddress;
+	
+	@FindBy(css="div.span6 address")
+	private WebElement moveToAddress;
+	
+	@FindBy(css="div#linesTable.ng-scope div.pull-left.lines-column")
+	private List<WebElement> linesTableList;
+	
+	@FindBy(css="div[id='linesHeaderContainer'][class='ng-scope'] div[id='linesHeader'] div[class*='result-headers'] div")
+	private List <WebElement> headerList;
+	
+	public LineActions(WebDriver driver){
+		this.driver = driver;
+	}
+	
+	String selectedContractSiteID, selectedContractCity, selectedContractCountry;
+	int selctedRow;
+	// Method to check first checkbox which appears when Status icon is ok
+	public boolean chooseConfirmedStatusCheckbox(){
+				int statuscount, checkboxxount;
+				statuscount = statusicons.size();
+				checkboxxount = linecheckboxes.size();
+				if(statuscount==checkboxxount){
+				System.out.println(" ia m in chhose");
+					for(int i=0; i < statuscount;i++) {
+						//System.out.println("Icon class-->" + statusicons.get(i).getAttribute("class").toString());
+						//if (statusicons.get(i).getAttribute("title").equalsIgnoreCase("Confirmed")){
+						System.out.println("Attribute---> " + statusicons.get(i).getAttribute("class"));
+						if (statusicons.get(i).getAttribute("class").contains("icon-ok")){
+							System.out.println(" i am inside attribute");
+							selectedContractSiteID = getDatacellValue("Site Id", i);
+							System.out.println("selectedContractSiteID" + selectedContractSiteID);
+							selectedContractCity = getDatacellValue("City", i);
+							selectedContractCountry = getDatacellValue("Country",i);
+							selctedRow = i;
+							linecheckboxes.get(i).click();
+							return true;
+						}
+					}
+				} 
+				System.out.println("failed to selected the Checkbox.");
+				return false;
+	}
+	//Method to check
+	public boolean verifyLineAction(String actionname) throws InterruptedException{
+		//actiondroppdown.click();	
+		Thread.sleep(2000);
+		for(int i=0; i<actionmenuitems.size(); i++){
+			if(actionmenuitems.get(i).getText().contains(actionname)){
+				return true;
+			}
+		}
+		return false;		
+	}
+	
+	public void clickLinesActionButton() throws InterruptedException{
+		//System.out.println("isdisplayed--> " + actiondroppdown.isDisplayed());
+		//Actions myaction = new Actions(driver);
+		//Action clkActBtn = myaction.moveToElement(actiondroppdown).click().build();
+		//clkActBtn.perform();
+		linesActiondroppdown.click();
+		Thread.sleep(2000);
+	}
+
+	public void clickContractsActionButton() throws InterruptedException{
+		//System.out.println("Contract butn isdisplayed-->" + contractsActiondroppdown);
+		Thread.sleep(4000);
+		WebElement acbut = driver.findElement(By.cssSelector("div.span4 div.actions-dropdown button.btn"));
+		System.out.println("text--> " + acbut.getText());
+		acbut.click();
+		
+		//contractsActiondroppdown.click();
+		Thread.sleep(2000);
+	}
+	
+	public void closeActionMenu(){
+		driver.findElement(By.cssSelector("div[class*=alert-container]")).click();
+	}
+	
+	// Method choose required action from Action menu
+	public boolean chooseLinesAction(String actionname) throws InterruptedException{
+			//System.out.println(actiondroppdownLocator.getText() + actiondroppdownLocator.isDisplayed());
+			Thread.sleep(3000);
+			linesActiondroppdown.click();	
+			Thread.sleep(3000);
+			for(int i=0; i<actionmenuitems.size(); i++){
+				if(actionmenuitems.get(i).getText().contains(actionname)){
+					actionmenuitems.get(i).click();
+					return true;
+				}
+			}
+		return false;
+		
+	}
+	
+	// Method choose required action from Action menu
+	public boolean chooseContractsAction(String actionname) throws InterruptedException{
+			//System.out.println(actiondroppdownLocator.getText() + actiondroppdownLocator.isDisplayed());
+			Thread.sleep(3000);
+			contractsActiondroppdown.click();	
+			Thread.sleep(3000);
+			for(int i=0; i<actionmenuitems.size(); i++){
+				if(actionmenuitems.get(i).getText().contains(actionname)){
+					actionmenuitems.get(i).click();
+					return true;
+				}
+			}
+		return false;
+		
+	}	
+	// Method to enter search data in move location page
+	public boolean searchSites(String searchString){
+			siteserachInput.sendKeys(searchString);
+			return true;
+	}
+	// Method to click on Move button based on country
+	public boolean clickMovebasedonCountry(String Conutry){
+		
+		if(movecountryList.size()==movebuttonlist.size()){
+			for(int i=0; i<movecountryList.size();i++){
+				if(movecountryList.get(i).getText().equalsIgnoreCase(Conutry)){
+					movebuttonlist.get(i).click();
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	// Method to click on ConfirmSiteMove
+	public void clickConfirmSiteMove() throws InterruptedException{
+		for(WebElement i : movestatusButtonsList){
+			if(i.getText().contains("Confirm Site Move")){
+				i.click();
+				waitforalertcomplete();
+				break;
+			}
+		}
+	}
+	// Method to click on cancel site move
+	public void clickCacelSiteMove() throws InterruptedException{
+		for(WebElement i : movestatusButtonsList){
+			if(i.getText().contains("Cancel")){
+				i.click();
+				waitforalertcomplete();
+				break;
+			}
+		}
+	}
+	
+	//method to click Contracts tab.
+	public void clickContractsTab() throws InterruptedException{
+		
+		for(WebElement i : buttonslist){
+			if(i.getText().contains("Contracts")){
+				i.click();
+				Thread.sleep(2000);
+			}
+		}
+	}
+	//method to click Contracts tab.
+	public void clickLinesTab() throws InterruptedException{
+		for(WebElement i : buttonslist){
+			if(i.getText().contains("Lines")){
+				i.click();
+				Thread.sleep(2000);
+			}
+		}
+	}
+	
+	// Method to get data cell value from given column name and row number
+	public String getDatacellValue(String ColName, int rownumber){
+		int colnum = getColumnNumber(ColName);
+    	String desiredColCss= "//*[@id='linesTable']/div["+ colnum +"]/div";
+		List<WebElement> columnValuesList = driver.findElements(By.xpath(desiredColCss));
+		return columnValuesList.get(rownumber).getText().trim();
+
+	}
+    // Get the Column Number based on the given Column Name
+    public int getColumnNumber(String ColName){
+    	if(headerList.size()==linesTableList.size()){
+    		List<String> ColHeaderList = getColumnHeaders();
+    		for(int i=0;i< ColHeaderList.size(); i++){
+    			if( ColHeaderList.get(i).contains(ColName)){
+    				return i+1;
+    			}
+    		}	
+    	}else{
+    		
+    		System.out.println(" Header Column count and displayed columns counts are not mathing");
+    	}
+    	return 0;
+    }	
+	// Search Result Column Headers list
+    public List <String> getColumnHeaders(){
+    	int columnsCount = headerList.size();
+    	List <String> columnNamesList = new ArrayList <String>();
+    	for(int i = 0; i<columnsCount; i++){
+    		columnNamesList.add(headerList.get(i).getText());
+    	}	
+    	return columnNamesList;
+    }      
+    public boolean validateMovedContractData(){
+    	//Validate Status showing time
+    	if ( statusicons.get(selctedRow-1).getAttribute("class").contains("icon-time")){
+        	String movedSiteid = getDatacellValue("Site Id", selctedRow);
+        	String movedCity = getDatacellValue("City", selctedRow);
+        	String movedCountry = getDatacellValue("Country", selctedRow);	
+        	if ( !(movedSiteid.equalsIgnoreCase(selectedContractSiteID)) &&  !(movedCity.equalsIgnoreCase(selectedContractCity)) && !(movedCountry.equalsIgnoreCase(selectedContractCountry)) ){
+        		return true;
+        	}
+    	}  	
+    	return false;
+    }
+    public boolean waitforalertcomplete() throws InterruptedException{
+    	boolean mywait = (new WebDriverWait(driver, 30000))
+    			  .until(ExpectedConditions.textToBePresentInElement(By.cssSelector("div[class*=alert-container]"), "complete"));
+    	Thread.sleep(3000);
+    	
+    	return mywait;
+    }
+        
+}

@@ -1,0 +1,22 @@
+package com.wwt.scm;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class CommonUtilLibrary {
+	
+    public static int readcountfromfacetline(String displayedChannel){
+    	String recordnum=""; 
+	    Pattern p =  Pattern.compile("\\((.*?)\\)",Pattern.DOTALL);
+		Matcher matcher = p.matcher(displayedChannel.trim());
+		while(matcher.find()){
+		   	recordnum = matcher.group(1);
+		   	recordnum = recordnum.replace(",","");  
+		}
+    	if(recordnum.equalsIgnoreCase("") ){
+    		recordnum = "0";
+    	}
+	   	 return (new Integer(recordnum));   
+    }
+
+}

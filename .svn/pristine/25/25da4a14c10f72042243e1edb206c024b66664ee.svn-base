@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >  
+<suite name="WWT Test Suite" verbose="1" >  
+  <test name="WWT SCM Test Automation" >  
+    <classes>  
+      <class name="com.wwt.scm.TestNG_FacetSearching" /> 
+      <class name="com.wwt.scm.TestNG_LineDetailDisplay" /> 
+      <class name="com.wwt.scm.TestNG_FacetSearching" /> 
+      <class name="com.wwt.scm.TestNG_TestNG_SearchFilterDriver" />     
+    <!--  <class name="com.wwt.servicenow.TestNG_Testlisteners" /> -->
+    </classes>  
+  </test>  
+</suite> 

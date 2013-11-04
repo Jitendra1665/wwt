@@ -1,0 +1,193 @@
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class StatsPage {
+	
+	//statspage.statResultsValidation("1M0C6-4JHZP-K8363-9L38H-8DEQ1 050A1-D9HYK-K88Z2-898AH-8REM0");
+	
+@FindBy(css="div[id='result-navigation'] div[class='pull-left notification-position'] " +
+		"span[class='notification not-found-notify-success notification-green ng-binding']")
+private WebElement successNumber;
+
+@FindBy(css="div[id='result-navigation'] div[class='pull-left notification-position'] " +
+		"span[class='notification not-found-notify-error notification-red ng-binding']")
+private WebElement errorNumber;
+
+/* @FindBy(css="div[id='result-navigation'] " +
+        "div[class='span4 left-button-group'] div[class='pull-left notification-position'] " +
+        "button[facet-target='notFound']")
+private WebElement statsButto;  */
+
+@FindBy(css="div[id='search-meta-container'] h3[class='span3'] span[class='matched-count ng-binding']")
+private WebElement actualMatchedCountCss;
+
+@FindBy(css="div[id='search-meta-container'] h3[class='span3'] span[class='not-found-count ng-binding']")
+private WebElement actualNotFoundCountCss;
+
+@FindBy(css="div[id='not-found-table-container'] table[id='not-found-table'] " +
+		"td[class='term ng-binding']")
+private List <WebElement> notFoundResultText;
+
+@FindBy(css="div[id='matched-terms-table-container'] table[id='matched-terms-table'] " +
+		"tr[class='ng-scope'] td[class='term ng-binding']")
+private List <WebElement> matchedResultText;
+
+@FindBy(css="div#content-main div#result-navigation div.notification-position button.btn")
+private WebElement statsButton1;
+
+@FindBy(css="div#search-meta-container.row-fluid div.span9 div.span3 button.btn")
+private WebElement statReSubmitButton;
+
+
+
+protected final WebDriver driver;
+	public StatsPage(WebDriver driver) 
+	{
+		this.driver = driver;
+	}
+	
+	public boolean notFoundNumberDisplay()
+	{
+		boolean errorNumberDisplayFlag = false;
+		if(errorNumber.isDisplayed())		{
+			errorNumberDisplayFlag=true;
+		}
+		return errorNumberDisplayFlag;
+	}
+	
+	public boolean successNumberDisplay()
+	{
+		boolean successNumberDisplayFlag = false;
+		if(successNumber.isDisplayed()){
+			successNumberDisplayFlag=true;
+		}
+		return successNumberDisplayFlag;
+	}
+	
+	
+	public int getSuccessStatCount()
+	{
+		
+		return new Integer(successNumber.getText());
+	}
+	
+	public int getNotFoundStatCount()
+	{
+		return new Integer(errorNumber.getText());
+	}
+	
+	public void clickingOnStatsButton()
+	{
+		statsButton1.click();
+	}
+	
+	public int getStatPageMatchCount()
+	{
+		
+		return new Integer(actualMatchedCountCss.getText());
+	}
+	
+	public int getStatPageNotFoundCount()
+	{
+		return new Integer(actualNotFoundCountCss.getText());
+	}
+	
+	//verifying the success button is green
+	public boolean greenSuccessNum(){
+		
+		
+		return false;
+	}
+	
+	
+	
+	//Verifying the count of the matched results displayed on the stats page and the stats button
+	public boolean verifyMatchCount() throws InterruptedException
+	{
+		boolean matchedFlag = false;
+		clickingOnStatsButton();
+		Thread.sleep(3000);
+		if(getSuccessStatCount()==getStatPageMatchCount()){
+			matchedFlag = true;
+		}
+		return matchedFlag;
+	}
+	
+	//Verifying the count of the non matched results displayed on the stats page and the stats button
+	public boolean verifyNotFoundCount() throws InterruptedException{
+		boolean notFoundFlag = false;
+		clickingOnStatsButton();
+		Thread.sleep(3000);
+		if(getNotFoundStatCount()==getStatPageNotFoundCount()){
+			notFoundFlag = true;
+		}
+	
+		return notFoundFlag;
+	}
+
+	//verify search results in the table.
+	public boolean verifySearchValues(String searchedItem) throws InterruptedException
+	{
+		boolean searchAndActualResultsMatchFlag = false;
+		for(int i = 0; i<matchedResultText.size(); i++){
+			if(searchedItem.contains(matchedResultText.get(i).getText())){
+				searchAndActualResultsMatchFlag = true;
+			}
+		}
+		return searchAndActualResultsMatchFlag;
+	}
+
+	// Verification of the StatsButton enablement.
+	public boolean verifyStatsButton() throws InterruptedException{
+		boolean searchAndActualResultsNotFoundFlag = false;
+		if(statsButton1.isEnabled()){
+			searchAndActualResultsNotFoundFlag = true;
+		}
+		return searchAndActualResultsNotFoundFlag;
+	}
+	
+	// Clicking on Stats Matched Results Button
+	public void clickStatMatchedResultsButton() throws Exception{
+		if(successNumberDisplay()){
+			clickingOnStatsButton();
+			Thread.sleep(3000);
+		}
+	}		
+	
+	//verify the non matched search results when there are
+	public boolean verifyNotFoundSearchItem(String searchedItem) throws InterruptedException{
+		boolean searchAndActualResultsNotFoundFlag = false;
+		for(int i = 0; i<notFoundResultText.size(); i++){
+			if(searchedItem.contains(notFoundResultText.get(i).getText())){
+				searchAndActualResultsNotFoundFlag = true;
+			}
+		}
+		return searchAndActualResultsNotFoundFlag;
+	}
+
+	// Clicking on Stats Matched Results Button
+	public void verifyStatNotFoundResults() throws Exception{
+		if(notFoundNumberDisplay()){
+			//System.out.println("Stats button : "+getNotFoundStatCount());
+			clickingOnStatsButton();
+			Thread.sleep(3000);
+			//System.out.println(getStatPageNotFoundCount());
+		}else{
+			System.out.println("There is not stats diaplayed for the given search criteria");
+		}
+	}
+
+	// Verification of Stat Resubmit Button Dispaly
+	public boolean statReSubmitButtonDisplay(){
+	   boolean statResubmitFlag = false;
+	   if(statReSubmitButton.getText().contains("Resubmit Search")){
+		   statResubmitFlag = true;
+	   }
+	   return statResubmitFlag;
+	}
+}

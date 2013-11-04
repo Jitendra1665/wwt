@@ -1,0 +1,107 @@
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class Navigation {
+	
+	
+	@FindBy(css="div[id='navbar'] li[class='dropdown'] a[class='dropdown-toggle'] span")
+	private WebElement tiedTextCss;
+		
+	@FindBy(css="div[id='result-pager'] li strong[class*='ng-binding']")
+	private List <WebElement> PageNumberAndTotalPagesCount;
+	
+	@FindBy(css="div[id='result-pager'] li button[class='btn btn-mini'][ng-disabled='searchBus.searchCriteria.pageNumber == 1']")
+	private WebElement previousPageNavigationButton;
+	
+	@FindBy(css="div[id='result-pager'] li button[class='btn btn-mini'][ng-disabled*='searchBus.searchCriteria.pageNumber == searchBus.']")
+	private WebElement nextPageNavigationButton;
+	
+	protected final WebDriver driver;
+	
+	public Navigation(WebDriver driver) 
+	{
+		this.driver = driver;
+	}
+	
+	// get the actual customer name displayed on the web site.
+	public String getTiedCustomerValue()
+	{
+		return tiedTextCss.getText();
+	}
+	
+	// verifies if the customer name who has logged in to the scm is correct or not
+	public boolean verifyTiedCustomerValue(String expectedCustValue)
+	{
+		boolean tiedCustomerFlag = false;
+		if(tiedTextCss.getText().contains(expectedCustValue))
+		{
+			tiedCustomerFlag = true;
+		}
+		return tiedCustomerFlag;
+	}
+	
+	//get the total pages number
+	public int getSearchResultsTotalPage()
+	{
+		Integer totalPageCount = null;
+		
+		String a = PageNumberAndTotalPagesCount.get(1).getText();
+
+		totalPageCount = new Integer(a);
+		
+		return totalPageCount;
+	}
+	
+	//get current page number
+	public int getSearchResultsCurrentPage()
+	{
+		Integer currentPageNumber = null;
+
+		String a = PageNumberAndTotalPagesCount.get(0).getText();
+
+		currentPageNumber = new Integer(a);
+		
+		return currentPageNumber;
+	
+	}
+	
+	//will traverse you to previous page.
+	public void navigateToPreviousPages()
+	{
+		previousPageNavigationButton.click();
+	}
+	
+	//will traverse you to next page.
+	public void navigateToNextPages()
+	{
+		nextPageNavigationButton.click();
+	}
+	
+	//will check whether the previous page navigation button is disabled or not.
+	public boolean navigateToPreviousButtonStatus()
+	{
+		boolean previousPageNavigBtnStatus =  false;
+		if(previousPageNavigationButton.isEnabled())
+		{
+			previousPageNavigBtnStatus = true;
+		}
+		return previousPageNavigBtnStatus;
+	}
+	
+	//Will check whether the next page navigation button is enabled or not
+	public boolean navigateToNextButtonStatus()
+	{
+		boolean nextPageNavigBtnStatus =  false;
+		if(nextPageNavigationButton.isEnabled())
+		{
+			nextPageNavigBtnStatus = true;
+		}
+		return nextPageNavigBtnStatus;
+	}
+	
+}

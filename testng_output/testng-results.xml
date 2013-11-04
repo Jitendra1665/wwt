@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="WWT Test Suite" duration-ms="47201" started-at="2013-10-25T10:13:57Z" finished-at="2013-10-25T10:14:44Z">
+    <groups>
+    </groups>
+    <test name="WWT SCM External User" duration-ms="47201" started-at="2013-10-25T10:13:57Z" finished-at="2013-10-25T10:14:44Z">
+      <class name="com.wwt.scm.TestNG_SearchFilterDriver">
+        <test-method status="PASS" signature="launchAndLogin()[pri:0, instance:com.wwt.scm.TestNG_SearchFilterDriver@30b98167]" name="launchAndLogin" is-config="true" duration-ms="19617" started-at="2013-10-25T15:43:58Z" finished-at="2013-10-25T15:44:18Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- launchAndLogin -->
+        <test-method status="PASS" signature="SearchAndFilter_2_0(java.lang.String, java.lang.String)[pri:0, instance:com.wwt.scm.TestNG_SearchFilterDriver@30b98167]" name="SearchAndFilter_2_0" duration-ms="23970" started-at="2013-10-25T15:44:18Z" data-provider="SCMGETCSVTestData" finished-at="2013-10-25T15:44:42Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[All]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[1001416]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- SearchAndFilter_2_0 -->
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:com.wwt.scm.TestNG_SearchFilterDriver@30b98167]" name="afterTest" is-config="true" duration-ms="0" started-at="2013-10-25T15:44:44Z" finished-at="2013-10-25T15:44:44Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterTest -->
+      </class> <!-- com.wwt.scm.TestNG_SearchFilterDriver -->
+    </test> <!-- WWT SCM External User -->
+  </suite> <!-- WWT Test Suite -->
+</testng-results>

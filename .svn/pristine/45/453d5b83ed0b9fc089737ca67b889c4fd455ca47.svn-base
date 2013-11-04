@@ -1,0 +1,150 @@
+/*****************************************************
+ * Purpose: Customer Facet Page Objects
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: 10-Sep-2013
+ *****************************************************/
+package com.wwt.scm;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+
+public class FilterCustomer {
+	
+protected final WebDriver driver;
+
+	@FindBy(css="a[id='customer_name']")
+	private WebElement customerSearchIcon;
+	
+	@FindBy(css="div[class='container-fluid'] div[class='input-append'] input[placeholder='Filter Customer']")
+	private WebElement facetinputBox;
+	
+	@FindBy(css="div[id='customer_name-data'] i[class*='icon-remove']")
+	private WebElement custfilterdropdown;
+	
+	@FindBy(css="button[id='remove-selected-facets']")
+	private WebElement removeselectedFacets;
+	
+	@FindBy(css="div#customer_name-data.facet-popover div.row-fluid div.span12 div.span12 ul#facet-return-list-item.nav li.ng-scope a.span12")
+	private List<WebElement> customerfacetSearchList;
+
+	String customerSerachString=null;
+	
+    public FilterCustomer(WebDriver driver) {
+        this.driver = driver;
+    }
+    // Clicking on Customer Icon
+    public void customerIconClick(){
+    	try{
+			customerSearchIcon.click();
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    // Entering the Customer name to Filter in the Customer Filter Box.
+    public void enterCustomerName(String custFilterName){
+    	try{
+    	customerSerachString = custFilterName;
+		facetinputBox.sendKeys(custFilterName);
+    	} catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    //Close Customer facer drop down
+    public void closeCustomerFilterDropDown(){
+    	try{
+	    	custfilterdropdown.click();
+	    	Thread.sleep(1000);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    //Removing Customers from Facet
+    public void removeCustomersfromFacet(){
+    	try{
+    		removeselectedFacets.click();
+    		Thread.sleep(2000);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }    
+	// Verify Search items displayed in facet has Customer name
+    public boolean verifyCustomerFacetSearchResult(){
+    	try{
+    	for(int i=0;i<customerfacetSearchList.size();i++){
+    		if ( !customerfacetSearchList.get(i).getAttribute("title").toLowerCase().contains(customerSerachString.toLowerCase())){
+    			return false;
+    		}
+    	}
+    	} catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return true;
+    } 
+    // Method to get record count from search facet Customers display for a single line
+    public int getcountfromCustomerFacet(String displayedcustomer){
+    	String recordnum=""; 
+    	try{
+	    	 Pattern p =  Pattern.compile("\\((.*?)\\)",Pattern.DOTALL);
+		   	 Matcher matcher = p.matcher(displayedcustomer.trim());
+		   	 while(matcher.find()){
+		   		recordnum = matcher.group(1);
+		   		recordnum = recordnum.replace(",","");  
+		   	 }
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+	   	 return (new Integer(recordnum));   
+    }
+    // To get total count from the items displayed in facet search including multiple rows
+    public int getRecordcountfromCustomerFacetSearch() {
+    	int reccount = 0;
+    	try{
+	    	for(int i=0; i<customerfacetSearchList.size();i++){
+	    		int mycount = getcountfromCustomerFacet(customerfacetSearchList.get(i).getText());
+	    		reccount = reccount+mycount ;
+	    	}
+    	}catch (Exception e){
+    		e.printStackTrace();
+    	}
+	   	return reccount;   	
+    }
+    // To add all sales channels displayed in facet search to Main search option
+    public boolean addCustomerstoSearch(){
+    	try{	
+    		 int saleschannellistsize = customerfacetSearchList.size();
+    		 while(saleschannellistsize > 0){
+	    		customerfacetSearchList.get(0).click();
+	    		Thread.sleep(1000);
+	    		if (saleschannellistsize > 1){
+	    			saleschannellistsize = customerfacetSearchList.size();    				
+	    		} else {
+	    			break;
+	    		}
+	    	}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return true;
+    }    
+}
+    
+
+   
+    
+    
+   
+   
+   
+
+
+   
+   

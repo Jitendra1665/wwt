@@ -1,0 +1,880 @@
+package com.wwt.scm;
+
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
+
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Options;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeMethod;
+//import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class TestNG_ExtUserSearchFilterDriver {
+	
+	FileInputStream ConfigFIS = null, HomeFIS = null;
+	
+	protected WebDriver driver = null;
+	String NODEURL;
+	
+	Properties scriptproperties = null;
+	public Options options = null;
+	String BROWSER = null;
+	
+	DesiredCapabilities cap = null;
+//	SetDriverConfig driverPropertiesConfiguration = null;
+	LoginPage logIn = null;
+	HomePage homePage = null;
+	SearchResults searchResultsPage = null;
+	InstallSiteCustomerFacet siteCustFacet = null;
+	DateSelectionFacet dateSelectionFacet = null;
+	ContractHeader contractHeaderPage = null;
+	LineStatusFacet lineStatus = null;
+	ColumnHideOrFreeze colHideOrFreeze = null;
+	
+	CustomerFacet custFacet = null;
+	SalesChannelFacet salesChannelFacet = null;
+	InstallSiteCustomerFacet siteCustomerFacet=null;
+	AddressFacet addressCustFacet=null;
+	DateSelectionFacet datesearchFacet=null;
+	LineStatusFacet linestatussearchFacet=null;
+	LineDetails LineDetailsPage=null;
+	ColumnHideOrFreeze freezehidefacet = null;
+	String nodeURL;
+	protected ThreadLocal<RemoteWebDriver> threadDriver = null; 
+	
+	
+	String scenario = null;
+		
+	@AfterClass
+	public void afterTest(){
+		driver.quit();
+	}
+	
+	@BeforeMethod
+	public void launchAndLogin() throws Exception{
+		try{
+			if(driver==null){
+				ConfigFIS = new FileInputStream(".\\scm.properties");
+				scriptproperties = new Properties();
+				scriptproperties.load(ConfigFIS);
+			
+				cap = DesiredCapabilities.firefox();
+				cap.setBrowserName("firefox");
+				cap.setPlatform(Platform.ANY);
+				NODEURL = scriptproperties.getProperty("SCM_NODE_URL");
+				driver = new RemoteWebDriver (new URL(NODEURL), cap);
+				
+				SetDriverConfig browserSetUp = PageFactory.initElements(driver,SetDriverConfig.class);
+				
+				//BROWSER = scriptproperties.getProperty("BROWSERTYPE");
+				//driver = browserSetUp.getDriver(BROWSER);
+				
+				logIn = PageFactory.initElements(driver,LoginPage.class);		
+				homePage = PageFactory.initElements(driver,HomePage.class);
+				searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+				siteCustFacet = PageFactory.initElements(driver, InstallSiteCustomerFacet.class);
+				dateSelectionFacet =  PageFactory.initElements(driver, DateSelectionFacet.class);
+				contractHeaderPage = PageFactory.initElements(driver,ContractHeader.class); 
+				lineStatus =  PageFactory.initElements(driver,LineStatusFacet.class); 
+				colHideOrFreeze = PageFactory.initElements(driver, ColumnHideOrFreeze.class);
+				
+				browserSetUp.launchBroswer(scriptproperties);
+						
+				String userId = scriptproperties.getProperty("SCM_EXTERNAL_LOGIN_USERNAME");
+				String passWord = scriptproperties.getProperty("SCM_EXTERNAL_LOGIN_PASSWORD");
+								
+				logIn.ClickOnlogIn(userId, passWord);
+				
+			}else{
+				homePage = PageFactory.initElements(driver,HomePage.class);
+				//homePage.clickOnResetButton();
+				homePage.clickHomeButton();
+			}
+		} catch(Exception e){
+			String methodname = Thread.currentThread().getStackTrace()[1].getMethodName();
+			CommonUtilLibrary.screenCapture(driver, methodname);
+			e.printStackTrace();
+		}
+	}
+	
+		
+	@Test(priority=5, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_0(String searchFilterValue) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_0() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{	 
+			homePage.clickOnResetButton();
+			scenario = "External users should not see search fields Product PO or Maint PO in Superflexible drop down";	
+			
+			homePage.clickFilterDropDown();
+			assertFalse(homePage.validateSearchFilterValue(searchFilterValue), scenario);
+			
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+				if (!status) {
+					CommonUtilLibrary.screenCapture(driver, methodname); 
+					driver.quit(); driver=null;  
+					throw new Exception(err_msg);
+				}			
+			}
+			System.out.println("Completed Test Case - SearchAndFilter_24_0() ");
+		}
+	
+	@Test(priority=10, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_1(String tiedCustName) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_1() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{	 
+			  homePage.clickOnResetButton();
+			  scenario = "External user should default to their mapped WWT customer values and see no others";
+			  //ToDo - need to change the code to verify the customer name column values,  instead of tied cust value.
+			  //assertTrue(homePage.verifyTiedCustomerValue(tiedCustName));
+
+				lineStatus.clickLineStatusIcon();
+				
+				Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("Line Status"), scenario);
+				lineStatus.ExternUser_selectCheckBox("Expired");
+				
+				Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("Line Status"), scenario);
+				lineStatus.ExternUser_selectCheckBox("Terminated");
+							
+				Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("End of Support"), scenario);
+				lineStatus.ExternUser_selectCheckBox("Support");
+				lineStatus.closeLinsestatusFacet();
+				
+				homePage.clickOnRunSearchButton();
+				searchResultsPage.clickContractsButton();
+			  		  
+			  assertTrue(contractHeaderPage.verifyColumnData("Customer", tiedCustName), scenario);
+			  			  
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}	 		
+		System.out.println("Completed Test Case - SearchAndFilter_24_1() ");
+	}
+	
+	@Test(priority=15, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_2(String faceValueColName, String searchSiteFacetValue) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_2() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{	 
+			
+			scenario = "Sites and Addresses should only be those tied to their WWT customer in the data; Validate output is only for sites selected in search";
+			homePage.clickOnResetButton();
+			siteCustFacet.clickInstallSiteCustomerIcon();
+			siteCustFacet.enterinstallsiteCustName(searchSiteFacetValue);
+			assertTrue(siteCustFacet.verifyInstallsiteFacetSearchResult());
+			siteCustFacet.addInstallSiteCusttoSearch();
+						
+			homePage.clickOnRunSearchButton();
+			assertTrue(searchResultsPage.validateFacetSearchDataWithColDataInAllPages(faceValueColName, searchSiteFacetValue), scenario);
+			
+			
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null;  
+				throw new Exception(err_msg);
+			}
+		}	 		
+		System.out.println("Completed Test Case - SearchAndFilter_24_2() ");
+	}
+	
+	@Test(priority=20, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_3(String verifyFacetName) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_3() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{	 
+			homePage.clickOnResetButton();
+			homePage.clickOnRunSearchButton();
+			
+			assertFalse(homePage.verifyGivenFacet(verifyFacetName), scenario);
+			
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}	 		
+		System.out.println("Completed Test Case - SearchAndFilter_24_3() ");
+	}
+	
+	
+	
+	@Test(priority=25, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_4(String verifyDateTypeListNamesInDateFacet, String contractPageColHeaderName, String fromToDateType) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_4() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{	 
+			DateSelectionFacet datesearchFacet = PageFactory.initElements(driver, DateSelectionFacet.class);
+			homePage.clickOnResetButton();
+			
+			scenario = "External user should only see Contract End Date range option;  All other date range sections for Creation Date, Product PO Date, Maintenance PO Date, Product PO Ship Date should be hidden from the external user";
+			dateSelectionFacet.clickDateSelectionFacet();
+			assertFalse(dateSelectionFacet.verifyDateTypeList(verifyDateTypeListNamesInDateFacet), scenario);
+			dateSelectionFacet.closeFilterDateDropDown();
+						
+			scenario = "Output in Lines tab should only show end dates in range entered";
+			homePage.clickOnRunSearchButton();
+			searchResultsPage.clickContractsButton();
+			//contractHeaderPage.sortRequiredColumn(colHeaderName, "asc");
+			String earliestEndDate = contractHeaderPage.getGivenColumnValuesList(contractPageColHeaderName).get(0);
+			
+			SimpleDateFormat  DF = new SimpleDateFormat("MMM d, yyyy");
+			Date date1 = DF.parse(earliestEndDate);
+				
+			SimpleDateFormat mydf = new SimpleDateFormat("yyyy/M/d");
+			String fromToDate = mydf.format(date1);
+			
+			datesearchFacet.clickDateSelectionFacet();
+			String dateType = fromToDateType;
+			datesearchFacet.Dateset(dateType, "from", fromToDate);
+			datesearchFacet.Dateset(dateType, "to", fromToDate);				
+			datesearchFacet.closeFilterDateDropDown();
+			
+			searchResultsPage.clickLinesButton();
+			homePage.clickOnRunSearchButton();
+			Assert.assertTrue(searchResultsPage.validateDateRange(dateType, fromToDate,fromToDate), scenario);		
+						
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}	 		
+		System.out.println("Completed Test Case - SearchAndFilter_24_4() ");
+	}
+	
+	
+	@Test(priority=30, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_5(String verifyListStatusTypes, String verifyListStatusChxBoxName, String colDataVerify) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_5() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{			
+			
+			homePage.clickOnResetButton();	
+			
+			lineStatus.clickLineStatusIcon();
+						
+			scenario = "The only line statuses they should see are Expired, Terminated and End of Support";									
+			Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("Line Status"), scenario);
+			lineStatus.ExternUser_selectCheckBox("Expired");
+			
+			Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("Line Status"), scenario);
+			lineStatus.ExternUser_selectCheckBox("Terminated");
+			
+			scenario = "External user should not see Publish statuses in Line Status list of values (Published, Not Published, Needs Review).";
+			Assert.assertFalse(lineStatus.ExternUser_verifyGivenLineStatus(verifyListStatusTypes), scenario);
+			
+			Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus(colDataVerify), scenario);
+			lineStatus.ExternUser_selectCheckBox("Support");
+			lineStatus.closeLinsestatusFacet();
+			
+			scenario = "Output in Details page should only contain lines that have an End of Support date value.";
+			
+			homePage.clickOnRunSearchButton();
+			System.out.println("closed and Searched");
+			assertFalse(searchResultsPage.ExternalUser_validateColumnData("End Of Support", ""), scenario);
+														
+		}catch(Throwable a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}	 		
+		System.out.println("Completed Test Case - SearchAndFilter_24_5() ");
+	}
+	
+	@Test(priority=35, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void SearchAndFilter_24_6(String contractTabHeaderList) throws Exception{ 
+		System.out.println("Started Test Case - SearchAndFilter_24_6() ");
+		
+		boolean status=true;
+		String err_msg="";
+		try{	
+			
+			scenario = "External user should not see counts of published lines in Contract header output;  ";
+			
+			homePage.clickOnResetButton();
+			lineStatus.clickLineStatusIcon();
+			
+			Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("Line Status"), scenario);
+			lineStatus.ExternUser_selectCheckBox("Expired");
+			
+			Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("Line Status"), scenario);
+			lineStatus.ExternUser_selectCheckBox("Terminated");
+						
+			Assert.assertTrue(lineStatus.ExternUser_verifyGivenLineStatus("End of Support"), scenario);
+			lineStatus.ExternUser_selectCheckBox("Support");
+			lineStatus.closeLinsestatusFacet();
+			
+			homePage.clickOnRunSearchButton();
+			searchResultsPage.clickContractsButton();
+			assertFalse(contractHeaderPage.verifyGivenContractsTabColumnHeaderList(contractTabHeaderList), scenario);
+
+			scenario = "The only columns in the Contract output will be WWT Customer, Contract #, Service Level and Earliest End Date";
+			contractTabHeaderList = "Contract Number , Customer, Service Level, Earliest End Date";
+			assertTrue(contractHeaderPage.verifyGivenContractsTabColumnHeaderList(contractTabHeaderList), scenario);						
+						
+		}catch(Throwable a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}	 		
+		System.out.println("Completed Test Case - SearchAndFilter_24_6() ");
+	}
+	
+	@Test(priority = 40, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_10(String selectSearchOption,
+			String searchData, String hideColumnName) throws Exception {
+		System.out.println("Started Test Case - LineAndDetailDisplay_2_10() ");
+
+		boolean status = true;
+		String err_msg = "";
+		try {
+			
+			scenario = "Hide columns in output display";
+
+			homePage.clickOnResetButton();
+			homePage.clickFilterDropDown();
+			homePage.selectingSearchOption(selectSearchOption);
+			homePage.enterSearchCriteria(searchData);
+			homePage.clickOnRunSearchButton();
+			assertTrue(searchResultsPage.verifyColumnHeaderAvailability(hideColumnName), scenario);
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.hideOrUnHide(hideColumnName);
+			colHideOrFreeze.clickApply();
+			assertFalse(searchResultsPage.verifyColumnHeaderAvailability(hideColumnName), scenario);
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null;  
+				throw new Exception(err_msg);
+			}
+		}
+		System.out.println("Completed Test Case - LineAndDetailDisplay_2_10() ");
+	}
+
+	@Test(priority = 45, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_11(String unHideColumnName)
+			throws Exception {
+		System.out.println("Started Test Case - LineAndDetailDisplay_2_11() ");
+		boolean status = true;
+		String err_msg = "";
+		try {
+			
+			homePage.clickOnResetButton();
+			homePage.clickOnRunSearchButton();
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.clickUnHideAll();
+			colHideOrFreeze.clickApply();
+			
+			// Hiding the column first to Verify the Un hide functionality
+			String hideColumn = unHideColumnName;
+			assertTrue(searchResultsPage.verifyColumnHeaderAvailability(hideColumn));
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			
+			colHideOrFreeze.hideOrUnHide(hideColumn);
+			colHideOrFreeze.clickApply();
+
+			// Code for un Hiding the hidden column.
+			scenario = "Unhide columns in output display";
+			assertFalse(searchResultsPage.verifyColumnHeaderAvailability(unHideColumnName));
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.hideOrUnHide(unHideColumnName);
+			colHideOrFreeze.clickApply();
+			assertTrue(searchResultsPage.verifyColumnHeaderAvailability(unHideColumnName), scenario);
+
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null;  
+				throw new Exception(err_msg);
+			}
+		}
+		System.out
+				.println("Completed Test Case - LineAndDetailDisplay_2_11() ");
+	}
+
+	@Test(priority = 50, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_12(String selectSearchOption,
+			String searchData, String freezeColumnName) throws Exception {
+		System.out.println("Started Test Case - LineAndDetailDisplay_2_12() ");
+		boolean status = true;
+		String err_msg = "";
+		try {
+			
+			scenario = "Freeze columns in output display, Ensure that the columns have frozen by scrolling";
+			homePage.clickOnResetButton();
+			homePage.clickFilterDropDown();
+			homePage.selectingSearchOption(selectSearchOption);
+			homePage.enterSearchCriteria(searchData);
+			homePage.clickOnRunSearchButton();
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.freezeOrUnFreeze(freezeColumnName);
+			// assertTrue(colHideOrFreeze.verifyFreeze(freezeColumnName),
+			// scenario);
+			// assertTrue(colHideOrFreeze.verifyFreezeCheckBox(freezeColumnName),
+			// scenario);
+			colHideOrFreeze.clickApply();
+			assertTrue(colHideOrFreeze.validatefrozenCols(freezeColumnName),
+					scenario);
+			assertFalse(
+					searchResultsPage
+							.verifyColumnHeaderAvailability(freezeColumnName),
+					scenario);
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null;  
+				throw new Exception(err_msg);
+			}
+		}
+		System.out
+				.println("Completed Test Case - LineAndDetailDisplay_2_12() ");
+	}
+
+	@Test(priority = 55, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_13(String unFreezeColumnName)
+			throws Exception {
+		System.out.println("Started Test Case -  LineAndDetailDisplay_2_13() ");
+		boolean status = true;
+		String err_msg = "";
+		try {
+
+			homePage.clickOnResetButton();
+			homePage.clickOnRunSearchButton();
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.clickUnfreezeAll();
+			colHideOrFreeze.clickApply();
+
+			// Freeze the column first to Verify the Un hide functionality
+			String freezeColumn = unFreezeColumnName;
+			assertTrue(searchResultsPage.verifyColumnHeaderAvailability(freezeColumn));
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.freezeOrUnFreeze(freezeColumn);
+			colHideOrFreeze.clickApply();
+
+			// Code to Validate Un Freeze functionality
+			scenario = "Un-Freeze columns in output display, Ensure that the columns have un-frozen by scrolling";
+
+			assertTrue(colHideOrFreeze.validatefrozenCols(freezeColumn), scenario);
+			assertFalse(searchResultsPage.verifyColumnHeaderAvailability(freezeColumn),	scenario);
+
+			colHideOrFreeze.clickOnColumnHideOrFreezeIcon();
+			colHideOrFreeze.freezeOrUnFreeze(unFreezeColumnName);
+			colHideOrFreeze.clickApply();
+			assertTrue(searchResultsPage.verifyColumnHeaderAvailability(unFreezeColumnName));
+
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null;  
+				throw new Exception(err_msg);
+			}
+		}
+		System.out.println("Completed Test Case -  LineAndDetailDisplay_2_13() ");
+	}
+
+	@Test(priority = 60, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_14(String selectSearchOption, 
+			String searchData, String freezeDateTypeColumnName, String sortType)
+			throws Exception {
+		System.out.println("Started Test Case -  LineAndDetailDisplay_2_14() ");
+		boolean status = true;
+		String err_msg = "";
+		try {
+
+			//toDO - not able to code this test case because we are getting blank rows on Earliest end date for External User.
+			
+		
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}
+		System.out.println("Completed Test Case -  LineAndDetailDisplay_2_14() ");
+	}
+	
+	
+	@Test(priority = 65, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_15(String colNames)
+			throws Exception {
+		System.out.println("Started Test Case -  LineAndDetailDisplay_2_15() ");
+		boolean status = true;
+		String err_msg = "";
+		try {
+
+			homePage.clickOnResetButton();
+			homePage.clickFilterDropDown();
+			homePage.clickOnRunSearchButton();
+
+			scenario = "External users should not see the following fields in the output: Publish Flag or checkbox, Sales Channel, Product PO#, Product PO Date, Maint PO# , Maint PO Date, Product PO Ship Date, Creation Date";
+			assertFalse(searchResultsPage.verifyColumnHeaderNames(colNames), scenario);
+	
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null; 
+				throw new Exception(err_msg);
+			}
+		}
+		System.out
+				.println("Completed Test Case -  LineAndDetailDisplay_2_15() ");
+	}
+	
+	
+	@Test(priority = 70, enabled = true, dataProvider = "getData", dataProviderClass = GetInputData.class)
+	public void LineAndDetailDisplay_2_16(String buttonName)
+			throws Exception {
+		System.out.println("Started Test Case -  LineAndDetailDisplay_2_16() ");
+		boolean status = true;
+		String err_msg = "";
+		try {
+
+			homePage.clickOnResetButton();
+			homePage.clickOnRunSearchButton();
+
+			scenario = "External users should not have an Action button for Publishing";
+			assertFalse(searchResultsPage.verifyGivenButtonName(buttonName));
+			
+		} catch (Throwable a) {
+			status = false;
+			err_msg = a.getMessage();
+		} finally {
+			String methodname = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			GetInputData.updateResultExcel(status, err_msg, methodname);
+			if (!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit(); driver=null;  
+				throw new Exception(err_msg);
+			}
+		}
+		System.out.println("Completed Test Case -  LineAndDetailDisplay_2_16() ");
+	}
+	
+	
+	@Test(enabled=true, priority=75,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_0(String testString) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			Assert.assertTrue(homePage.validatehomepagedispay(), "failed to validate Homepage display");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}
+
+	@Test(enabled=true, priority=80,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_1(String custName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			custFacet = PageFactory.initElements(driver,CustomerFacet.class);
+			custFacet.clickCustomerIcon();
+			custFacet.enterCustomerName(custName);			
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			LineDetailsPage.clickonFirstContractandValidate();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}		
+	@Test(enabled=true, priority=85,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_2(String testSrring) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.validatehomepagedispay();
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+											
+			LineDetailsPage.clickonAllsearchButton();
+			
+			Thread.sleep(5000);
+			Assert.assertEquals(LineDetailsPage.customerButtonhovertext(),"Customer","Failed to validate hover text of Customer");
+			Assert.assertEquals(LineDetailsPage.saleschannelButtonhovertext() ,"Sales Channel",  "Failed to validate hover text of Sales Channel");
+			Assert.assertEquals(LineDetailsPage.installsiteCustButtonhovertext() ,"Install Site Customer",  "Failed to validate hover text of Install Site Customer");
+			Assert.assertEquals(LineDetailsPage.addressButtonhovertext() ,"Address",  "Failed to validate hover text of Address");
+			Assert.assertEquals(LineDetailsPage.datesearchButtonhovertext(),"Date Search",  "Failed to validate hover text of Date Search");
+			Assert.assertEquals(LineDetailsPage.linestatusButtonhovertext() ,"Line Status",  "Failed to validate hover text of Line Status");
+			Assert.assertEquals(LineDetailsPage.allRunButtonhovertext() ,"Run Search",  "Failed to validate hover text of All Search");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}
+	@Test(enabled=true, priority=90,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_4(String testSrring) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			LineDetailsPage.clickonFirstContractandValidate();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}
+	
+	@Test(enabled=true, priority=95, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_6(String InstallsiteCustName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			siteCustomerFacet = PageFactory.initElements(driver, InstallSiteCustomerFacet.class);
+			siteCustomerFacet.clickInstallSiteCustomerIcon();
+			siteCustomerFacet.enterinstallsiteCustName(InstallsiteCustName);
+			siteCustomerFacet.addInstallSiteCusttoSearch();
+			siteCustomerFacet.closeInstallSiteCustFacet();		
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("Site Name"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}	
+	}	
+
+	@Test(enabled=true, priority=100, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_7(String custAddress) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			addressCustFacet = PageFactory.initElements(driver, AddressFacet.class);
+			addressCustFacet.clickAddressIcon();
+			addressCustFacet.enterAddress(custAddress);
+			addressCustFacet.addAddresstoSearch();
+			addressCustFacet.closeAddressFacet();	
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("Site Address"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}	
+	}	
+	@Test(enabled=true, priority=105, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_8(String custCity) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			addressCustFacet = PageFactory.initElements(driver, AddressFacet.class);
+			addressCustFacet.clickAddressIcon();
+			addressCustFacet.enterAddress(custCity);
+			addressCustFacet.addAddresstoSearch();
+			addressCustFacet.closeAddressFacet();	
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("City"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}	
+	}
+	@Test(enabled=true, priority=110, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_2_9(String custCountry) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			addressCustFacet = PageFactory.initElements(driver, AddressFacet.class);
+			addressCustFacet.clickAddressIcon();
+			addressCustFacet.enterAddress(custCountry);
+			addressCustFacet.addAddresstoSearch();
+			addressCustFacet.closeAddressFacet();	
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("Country"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				CommonUtilLibrary.screenCapture(driver, methodname); 
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}	
+	
+	
+	
+
+}

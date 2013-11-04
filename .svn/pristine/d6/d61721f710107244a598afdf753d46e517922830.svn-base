@@ -1,0 +1,226 @@
+package com.wwt.scm;
+
+import java.io.FileInputStream;
+import java.util.List;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Options;
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+public class TestNG_LineActions {
+
+	FileInputStream ConfigFIS = null;
+	protected WebDriver driver = null;
+	Properties scriptproperties = null;
+	public Options options = null;
+	List <String> ReprotNameList = null;
+	String BROWSER = null;
+	SetDriverConfig setDriver = null;
+	LoginPage logIn = null;
+	HomePage homePage = null;
+	CustomerFacet custFacet = null;
+	SearchResults searchResultsPage = null;
+	ContractHeader contractHeaderPage = null;
+	SalesChannelFacet salesChannelFacet = null;
+	InstallSiteCustomerFacet siteCustomerFacet=null;
+	AddressFacet addressCustFacet=null;
+	DateSelectionFacet datesearchFacet=null;
+	LineStatusFacet linestatussearchFacet=null;
+	LineDetails LineDetailsPage=null;
+	ColumnHideOrFreeze freezehidefacet = null;
+	LineActions lineactionPage = null;
+	
+	@BeforeMethod(enabled=true)
+	public void launchAndLogin() throws Exception {
+		boolean status=true;
+		String err_msg="";
+		try{
+			ConfigFIS = new FileInputStream(".\\scm.properties");
+			scriptproperties = new Properties();
+			scriptproperties.load(ConfigFIS);
+			BROWSER = scriptproperties.getProperty("BROWSERTYPE");
+			setDriver = PageFactory.initElements(driver,SetDriverConfig.class);
+			driver = setDriver.getDriver(BROWSER);	
+			setDriver.launchBroswer(scriptproperties);
+			logIn = PageFactory.initElements(driver,LoginPage.class);
+			String userId = scriptproperties.getProperty("SCM_LOGIN_USERNAME");
+			String passWord = scriptproperties.getProperty("SCM_LOGIN_PASSWORD");
+			logIn.ClickOnlogIn(userId, passWord);
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}	
+	}
+	
+	/*@AfterMethod(enabled=true)
+	public void logout() throws Exception {
+		driver.quit();
+	
+	}	*/
+	
+	@Test(priority=5, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void Line_Actions_1_0(String custName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{		
+			custFacet = PageFactory.initElements(driver,CustomerFacet.class);
+			custFacet.clickCustomerIcon();
+			custFacet.enterCustomerName(custName);
+			custFacet.addCustomerstoSearch();
+			custFacet.closeCustomerFacet();
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnRunSearchButton();
+			LineDetailsPage = PageFactory.initElements(driver, LineDetails.class);
+			Assert.assertTrue(LineDetailsPage.clickonFirstContractandValidate());
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}	
+	}
+	@Test(priority=10, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void Line_Actions_1_1(String custName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{			
+		custFacet = PageFactory.initElements(driver,CustomerFacet.class);
+			custFacet.clickCustomerIcon();
+			custFacet.enterCustomerName(custName);
+			custFacet.addCustomerstoSearch();
+			custFacet.closeCustomerFacet();
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnRunSearchButton();
+			lineactionPage = PageFactory.initElements(driver, LineActions.class);
+			lineactionPage.chooseConfirmedStatusCheckbox();
+			lineactionPage.chooseLinesAction("Automated Site Move");
+			lineactionPage.searchSites("j");
+			Thread.sleep(5000);
+			lineactionPage.clickMovebasedonCountry("INDIA");
+			lineactionPage.clickConfirmSiteMove();
+			lineactionPage.validateMovedContractData();
+			//Assert.assertTrue(lineactionPage.chooseConfirmedStatusCheckbox(), "failed to choose Checkbox");
+			//Assert.assertTrue(lineactionPage.chooseAction("Automated"), "failed to choose action");
+			//lineactionPage.searchSites("j");
+			//Thread.sleep(3000);
+			//Assert.assertTrue(lineactionPage.chooseAction("Automated Site Move"),"Unable to Choose Action button option");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}	
+	}	
+	@Test(priority=15, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void Line_Actions_1_2(String custName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{			
+			custFacet = PageFactory.initElements(driver,CustomerFacet.class);
+			custFacet.clickCustomerIcon();
+			custFacet.enterCustomerName(custName);
+			custFacet.addCustomerstoSearch();
+			custFacet.closeCustomerFacet();
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnRunSearchButton();
+			lineactionPage = PageFactory.initElements(driver, LineActions.class);
+			lineactionPage.chooseConfirmedStatusCheckbox();
+			lineactionPage.chooseLinesAction("Automated Site Move");
+			lineactionPage.searchSites("j");
+			Thread.sleep(5000);
+			lineactionPage.clickMovebasedonCountry("INDIA");
+			lineactionPage.clickCacelSiteMove();
+			lineactionPage.validateMovedContractData();
+			//Assert.assertTrue(lineactionPage.chooseConfirmedStatusCheckbox(), "failed to choose Checkbox");
+			//Assert.assertTrue(lineactionPage.chooseAction("Automated"), "failed to choose action");
+			//lineactionPage.searchSites("j");
+			//Thread.sleep(3000);
+			//Assert.assertTrue(lineactionPage.chooseAction("Automated Site Move"),"Unable to Choose Action button option");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}	
+	}		
+	@Test(priority=20, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void Line_Actions_2_0(String actionname) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{			
+			Thread.sleep(5000);
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnRunSearchButton();
+			lineactionPage = PageFactory.initElements(driver, LineActions.class);
+			lineactionPage.clickLinesActionButton();
+			Assert.assertTrue(lineactionPage.verifyLineAction("UnPublish Lines"));
+			Assert.assertTrue(lineactionPage.verifyLineAction("Publish Lines"));
+			lineactionPage.closeActionMenu();
+			lineactionPage.clickContractsTab();
+			Thread.sleep(4000);
+			lineactionPage.clickContractsActionButton();
+			Assert.assertTrue(lineactionPage.verifyLineAction("UnPublish Contracts"));
+			Assert.assertTrue(lineactionPage.verifyLineAction("Publish Contracts"));
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}			
+	}
+	
+	@Test(priority=20, enabled=true, dataProvider = "getData", dataProviderClass=GetInputData.class)
+	public void Line_Actions_2_1(String custName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{			
+			custFacet = PageFactory.initElements(driver,CustomerFacet.class);
+			custFacet.clickCustomerIcon();
+			custFacet.enterCustomerName(custName);
+			custFacet.addCustomerstoSearch();
+			custFacet.closeCustomerFacet();
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnRunSearchButton();
+			lineactionPage = PageFactory.initElements(driver, LineActions.class);
+			lineactionPage.chooseConfirmedStatusCheckbox();
+			lineactionPage.chooseLinesAction("Publish Lines");
+			// todo 
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}			
+	}	
+}

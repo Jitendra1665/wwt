@@ -1,0 +1,235 @@
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class PageNavigation {
+		
+	@FindBy(css="div[id='navbar'] li[class='dropdown'] a[class='dropdown-toggle'] span")
+	private WebElement tiedTextCss;
+		
+	/* @FindBy(css="div[id='result-pager'] li strong[class*='ng-binding']")
+	private List <WebElement> PageNumberAndTotalPagesCount; */
+		
+	@FindBy(css="div#resultPager ul.inline li")
+	private List <WebElement> currentPageNumberOrTotalPageCount;
+	
+	@FindBy(css="footer.ng-scope div#resultPager ul.inline li button i")
+	private List <WebElement> pageNavigationIcon;
+	
+	@FindBy(css="footer.ng-scope div#resultPager ul.inline li button")
+	private List <WebElement> navigButtonDisableVerification;
+	
+	@FindBy(css="div[id='result-pager'] li button[class='btn btn-mini'][ng-disabled='searchBus.searchCriteria.pageNumber == 1']")
+	private WebElement previousPageNavigationButton;
+	
+	@FindBy(css="div[id='result-pager'] li button[class='btn btn-mini'][ng-disabled*='searchBus.searchCriteria.pageNumber == searchBus.']")
+	private WebElement nextPageNavigationButton;
+	
+	@FindBy(css="div[id='lines-header-container-frozen'] div[id='lines-header-frozen'] div[style=''] span[class='column-name']")
+	private List <WebElement> freezedColumnHeaderList;
+	
+	protected final WebDriver driver;
+	
+	
+	//1. Page Object Constructor
+	public PageNavigation(WebDriver driver) 
+	{
+		this.driver = driver;
+	}
+	
+	//2. get the Page Navigation  Items  like (Total Page Count, Current Page Number) as a String.
+	public String getPageNavigMenuItem(String requiredItem){
+			String returnItem = null;
+			switch(requiredItem){
+				case "TotalPageCount" :
+					for(int i = 0; i<=currentPageNumberOrTotalPageCount.size(); i++){
+						String requiredField = currentPageNumberOrTotalPageCount.get(i).getText().trim();
+						if(requiredField.contains("Total Pages: ")){
+							String[] TotalPageCount = requiredField.split(":");
+							returnItem = TotalPageCount[1].trim();
+							break;
+						}
+					}
+					break;
+					
+				case "CurrentPageNumber" :
+					for(int i = 0; i<=currentPageNumberOrTotalPageCount.size(); i++){
+						String requiredField = currentPageNumberOrTotalPageCount.get(i).getText().trim();
+						System.out.println(" requiredField : "+ requiredField);
+						if(requiredField.contains("Page Number:")){
+							String[] TotalPageCount = requiredField.split(":");
+							System.out.println(" requiredField : "+ requiredField);
+							returnItem = TotalPageCount[1].trim();
+							break;
+						}
+					}break;
+			}
+			return returnItem;
+	} 
+	
+	//3. Returning the PageNumber or TotalPageCount as integer (Converted String number to integer)
+		public int getPagesCount(){			
+			return new Integer(getPageNavigMenuItem("TotalPageCount"));
+		}
+		
+	//4. Returning the PageNumber or TotalPageCount as integer (Converted String number to integer)
+		public int getCurrentPage(){
+			return new Integer(getPageNavigMenuItem("CurrentPageNumber"));
+		}	
+		
+		
+	
+	//4. Verifying the Page Navigation Buttons Status (Enabled/Disabled) Item
+	public boolean verifyNavigationButtonDisplay(String clickOnIcon){
+		boolean buttonStatusFlag = false;	
+		switch(clickOnIcon){
+			case "Next" :
+				for(int i = 0; i<pageNavigationIcon.size(); i++){
+					String requiredField = pageNavigationIcon.get(i).getAttribute("class").trim();
+					if(requiredField.contains("right")&&(navigButtonDisableVerification.get(i).getAttribute("disabled").equals("null"))){
+						System.out.println(navigButtonDisableVerification.get(i).getAttribute("disabled"));
+						System.out.println("requiredField : "+requiredField);
+						pageNavigationIcon.get(i).isEnabled();
+						buttonStatusFlag = true;
+						break;
+					}
+			}break;
+				
+			case "Previous" :
+				for(int i = 0; i<pageNavigationIcon.size(); i++){
+					String requiredField = pageNavigationIcon.get(i).getAttribute("class").trim();
+					System.out.println("pageNavigationIcon.get(i).isEnabled() : "+pageNavigationIcon.get(i).isEnabled());
+					if(requiredField.contains("left")&&(navigButtonDisableVerification.get(i).getAttribute("disabled").equals("null"))){
+						buttonStatusFlag = true;
+						break;
+					}
+			}break;
+		}return buttonStatusFlag;
+	}
+	
+	//5. Navigate to the Required page like (navigate to previous page , or next page or Hide/Freeze Page
+	public void clickOnNavigButton(String clickOnIcon){
+		switch(clickOnIcon){
+				
+			case "Next" :
+				for(int i = 0; i<pageNavigationIcon.size(); i++){
+					String requiredField = pageNavigationIcon.get(i).getAttribute("class").trim();
+					if(requiredField.contains("right")){
+						pageNavigationIcon.get(i).click();
+						break;
+					}
+				}break;
+						
+			case "Previous" :
+				for(int i = 0; i<pageNavigationIcon.size(); i++){
+					String requiredField = pageNavigationIcon.get(i).getAttribute("class").trim();
+					if(requiredField.contains("left")){
+						pageNavigationIcon.get(i).click();
+						break;
+					}
+				}break;
+						
+			case "HideOrFreeze" :
+				for(int i = 0; i<pageNavigationIcon.size(); i++){
+					String requiredField = pageNavigationIcon.get(i).getAttribute("class").trim();
+					if(requiredField.contains("gear")){
+						pageNavigationIcon.get(i).click();
+						break;
+					}
+				}break;
+			}
+		}
+	
+	//6. Verifying Whether the Results are displayed or not.
+	public boolean verifyResultsDisplay(){
+		boolean resultsDisplayFlag = false;
+		if(getPagesCount()>0){
+			resultsDisplayFlag = true;
+		}
+		return resultsDisplayFlag;
+	}
+		
+	
+	//7. Navigate Back to First Page.
+	public void NavigBackToFirstPage(){
+		for(int i=getPagesCount(); i>1; i--){
+			clickOnNavigButton("Previous");
+		}
+	}
+	
+	//8. Navigate to Last Page directly()
+	public void NavigToLastPage(){
+			for(int i=1; i<getPagesCount(); i++){
+				clickOnNavigButton("Next");
+			}
+	}
+	
+	//9. Navigate to Next Page directly()
+	public void clickToNavigateNextPage(){
+		for(int i=1; i<getPagesCount(); i++){
+			clickOnNavigButton("Next");
+		}
+	}
+	
+	//10. Navigate to Previous Page directly()
+	public void clickToNavigatePreviousPage(){
+		for(int i=1; i<getPagesCount(); i++){
+			clickOnNavigButton("Previous");
+		}
+	}
+		
+	//11. get the customer name displayed
+	public String getTiedCustomerValue()
+	{
+		return tiedTextCss.getText();
+	}
+	
+	//12. verifies if the customer name who has logged in to the scm is correct or not
+	public boolean verifyTiedCustomerValue(String expectedCustValue)
+	{
+		boolean tiedCustomerFlag = false;
+		if(tiedTextCss.getText().contains(expectedCustValue))
+		{
+			tiedCustomerFlag = true;
+		}
+		return tiedCustomerFlag;
+	}
+		
+	//13. Clicking on the given Freezed Column Heading
+	public boolean sortFreezedColumn(String s, String sortType) throws InterruptedException
+	{
+		boolean sortFlag = false;
+		for(int i =0 ;i<freezedColumnHeaderList.size(); i++)
+		{
+			
+			System.out.println("freezedColumnHeaderList.get(i).getText() : " + freezedColumnHeaderList.get(i).getText() );
+			if(freezedColumnHeaderList.get(i).getText().contains(s))
+			{
+				System.out.println("freezedColumnHeaderList.get(i).getText() : " + freezedColumnHeaderList.get(i).getText() );
+				if(sortType.contains("asc"))
+				{
+					System.out.println("Sorting asc Sorting asc ... Sorting asc ... ");
+					freezedColumnHeaderList.get(i).click();
+					sortFlag = true;
+					break;
+				}
+				else if(sortType.contains("desc"))
+				{
+					System.out.println("Sorting desc Sorting desc ... Sorting desc ... ");
+					freezedColumnHeaderList.get(i).click();
+					Thread.sleep(5000);
+					freezedColumnHeaderList.get(i).click();
+					Thread.sleep(5000);
+					sortFlag = true;
+					break;
+				}
+			}
+			
+		}
+		return sortFlag;
+	}
+}

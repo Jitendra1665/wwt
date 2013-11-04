@@ -1,0 +1,114 @@
+/*****************************************************
+ * Purpose: Facet Sales Channel Page Object
+ * Created by: Jitendra/Srinivas
+ * Created on: Aug-22-2013
+ * Last Modified on: 10-Sep-2013
+ *****************************************************/
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+
+public class SalesChannelFacet {
+	
+	protected final WebDriver driver;
+	
+	@FindBy(css="a[id='cl_wwt_sales_channel']")
+	private WebElement salesChannelIcon;
+
+	@FindBy(css="div[class='container-fluid'] div[class='input-append'] input[placeholder='Filter Sales Channel']")
+	private WebElement SalesChannelNameInputBox;
+
+	@FindBy(css=("div[id='cl_wwt_sales_channel-data'] i[class*='icon-remove']"))
+	private WebElement closesalesChannelFilter;
+
+	@FindBy(css="div#cl_wwt_sales_channel-data.facet-popover div.row-fluid div.span12 div.span12 div.span2 button#remove-selected-facets.btn")
+	private WebElement removeselectedfacet;
+
+	//@FindBy(css="div#cl_wwt_sales_channel-data.facet-popover div.row-fluid div.span12 div.span12 ul#facet-return-list-item.nav li.ng-scope a.span12")
+	@FindBy(css="div#cl_wwt_sales_channel-data.facet-popover div.row-fluid div.span12 div.facet-data-container div.search-facet-tab div.span12 ul#facet-return-list-item.nav li.ng-scope a.span12")
+	private List<WebElement> saleschannelfacetsearchlist;
+
+	String searchSalesChannelName=null;
+
+    public SalesChannelFacet(WebDriver driver) {
+        this.driver = driver;
+    }
+    
+    //Clicking on Sales Channel Icon
+    public void clicksalesChannelIcon(){		   	
+	    salesChannelIcon.click();
+    }
+    //Entering the Sales Channel Customer name to Filter in the Sales Channel Filter Box.
+    public void enterSalesChannelName(String salesChannelFilterName) throws InterruptedException{
+	    searchSalesChannelName = salesChannelFilterName;
+	    SalesChannelNameInputBox.click();
+		SalesChannelNameInputBox.sendKeys(salesChannelFilterName);
+		Thread.sleep(3000);
+    }
+    //Close the Sales Channel Filter List
+    public void closeSalesChannelFacet(){   	
+		closesalesChannelFilter.click(); 
+    }
+    // Remove Channel from Facet
+	public void removeChennelfromFacet() throws InterruptedException{
+		removeselectedfacet.click();
+		Thread.sleep(2000);
+	}
+	// Verify Search items displayed in facet has Sales channel name
+    public boolean verifyFacetSearchResult(){
+    	if(saleschannelfacetsearchlist.size()==0) return false;
+    	for(int i=0;i<saleschannelfacetsearchlist.size();i++){
+    		if ( !saleschannelfacetsearchlist.get(i).getAttribute("title").toLowerCase().contains(searchSalesChannelName.toLowerCase())){
+    			return false;
+    		}
+    	}
+    	return true;
+    } 
+    // To get total count from the items displayed in facet search including multiple rows
+    public int getRecordcountfromSalesChannelFacetSearch() {
+    	int reccount = 0;
+    	if(saleschannelfacetsearchlist.size()==0) return 0;
+    	for(int i=0; i<saleschannelfacetsearchlist.size();i++){
+    		int mycount = CommonUtilLibrary.readcountfromfacetline(saleschannelfacetsearchlist.get(i).getText());
+    		reccount = reccount+mycount ;
+    	}
+	   	return reccount;   	
+    }
+    // to add all sales channels displayed in facet search to Main search option
+    public boolean addsalesChanneltoSearch(){
+    	try{	
+    		int saleschannellistsize = saleschannelfacetsearchlist.size();
+    		if (saleschannellistsize==0) return false;
+	    	while(saleschannellistsize > 0){
+	    		saleschannelfacetsearchlist.get(0).click();
+	    		Thread.sleep(1000);
+	    		if (saleschannellistsize > 1){
+	    			saleschannellistsize = saleschannelfacetsearchlist.size();    				
+	    		} else {
+	    			break;
+	    		}
+	    	}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return true;
+    }
+}
+    
+
+   
+    
+    
+   
+   
+   
+
+
+   
+   

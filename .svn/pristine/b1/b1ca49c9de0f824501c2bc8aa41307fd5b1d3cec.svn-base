@@ -1,0 +1,213 @@
+package com.wwt.scm;
+
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+//import org.openqa.selenium.support.ui.Select;
+
+public class HomePage {
+	
+	public final WebDriver driver;
+	
+	//@FindBy(css="div[id='main-search-input'] button[facet-target='resetSearch']")
+	@FindBy(css="div[id='navbar'] button[class*='btn btn-warning reset-search-button']")
+	private WebElement  resetSearchButtonCSS;
+	
+	//@FindBy(css="div[id='main-search-input'] button[facet-target='runSearch']")
+	@FindBy(css="div[id='main-search-input'] button[class='btn btn-info search-button']")
+	private WebElement  runSearchButtonCSS;
+		
+	//@FindBy(css="div#main-search-input div.btn-group div button.btn.btn-info.dropdown-toggle")
+	@FindBy(css="div#main-search-input button.reset-search")
+	private WebElement searchFilterDropDownButton;
+	
+	//@FindBy(xpath="//*[@class='btn-group']//*[@class='open']//*[@class='dropdown-menu']//*[@class='ng-scope']/a/strong")
+	//@FindBy(css="div#main-search-input div.btn-group div.open ul.dropdown-menu li.ng-scope a strong.ng-binding")
+	@FindBy(css="div#main-search-input ul.dropdown-menu li.ng-scope a.ng-binding")
+	private List <WebElement> searchCriterianFilterOptions;
+		
+	@FindBy(css="div#content-main div#result-navigation div.notification-position button")
+	private WebElement statsButton;
+	
+	@FindBy(css="div[id='main-search-input'] textarea[class*='input-medium " +
+			"textarea search-textarea']")
+	private WebElement searchTextFieldCSS;
+	
+	@FindBy(css="div#result-navigation.row-fluid div.span4 div.pull-left span.notification-green")
+	private WebElement greenStatus;
+	
+	@FindBy(css="div[class='container-fluid'] div[class*='nav-collapse'] li[class*='facet-nav-button'] a span")
+	private List<WebElement> facetsList;
+	
+	//@FindBy(css="div[id='main-search-input'] button[facet-target='runSearch'] strong[class='ng-binding']")
+	@FindBy(css="div#main-search-input div.filtered-by-popdown")
+	private WebElement nameOnRunSearchButtonCSS;
+	
+	@FindBy(css="div[class='alert alert-info span12']")
+	private WebElement recentCRrequesttextLocator;
+	
+	//@FindBy(css="div[class*=alert-container]")
+	//private WebElement alertTextLocator;
+	
+	@FindBy(css="div#result-navigation.row-fluid div.span4 div.btn-group button[ng-click*='Line']")
+	private WebElement linesButton;
+	
+	@FindBy(css="div[id='navbar'] li[class='dropdown'] a[class='dropdown-toggle'] span")
+	private WebElement tiedTextCss;
+	
+	//
+	//@FindBy(css="div.container-fluid div.nav-collapse ul.nav li a i[class='icon-large icon-home']")
+	@FindBy(css="div#navbar.navbar div.navbar-inner div.container-fluid a.brand")
+	private WebElement homeButton;
+	
+    public HomePage(WebDriver driver) {
+        this.driver = driver;
+    }
+    
+    //1. Verify the Text Display on the Button is matching with the Argument that was provided by us
+    public boolean verifyTextOnSearchButton(String expectedButtonName){
+    	boolean verifyButtonName = false;
+       	String buttonName = nameOnRunSearchButtonCSS.getText();
+    	if(buttonName.contains(expectedButtonName)){
+    		verifyButtonName = true;
+    	}
+    	return verifyButtonName;
+    }
+
+    //2. Enter any required Text in the Search Text Area Field
+    public void	enterSearchCriteria(String contractNumber) throws InterruptedException{
+    	searchTextFieldCSS.sendKeys(contractNumber);
+    	Thread.sleep(5000);//To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+    }
+    
+    //3. To Clear the Text in the Filter Text Area.
+    public void	clearFilterTextArea(){
+    	searchTextFieldCSS.clear();
+    }
+    
+    //4. Click on Run(Search) button.
+    public void	clickOnRunSearchButton() throws InterruptedException{
+    	runSearchButtonCSS.click();
+    	Thread.sleep(5000);
+    	//waitforalertcomplete();
+/*    	if(statsButton.getAttribute("class").contains("active")&&(greenStatus.isDisplayed())){
+    		linesButton.click();
+    	}*/
+    }  
+    
+    //5. Click on list select dropdown
+    public void clickFilterDropDown() throws InterruptedException
+    {
+    	searchFilterDropDownButton.click();
+    	Thread.sleep(3000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+    }
+    
+    //6. Clicking on Reset Button
+    public void clickOnResetButton() throws InterruptedException{
+    	resetSearchButtonCSS.click();
+    	Thread.sleep(5000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+    }
+    
+   //7. Selecting the Required Filter criteria.   
+    public void selectingSearchOption(String requiredOption) throws InterruptedException{
+       //filterDropDownButton.click();
+       	//Thread.sleep(3000);
+    	
+       	for(int i = 0; i<searchCriterianFilterOptions.size(); i++){
+       		if(searchCriterianFilterOptions.get(i).getText().equals(requiredOption)){
+       			searchCriterianFilterOptions.get(i).click();
+       			break;
+       		}
+       	}  
+     }
+    
+    //8. Check whether home page appears or not
+    public boolean validatehomepagedispay(){
+    	return (recentCRrequesttextLocator.isDisplayed());
+    }
+    
+    // Not used the below method.
+    //9. Returning the Search Filter Values available in the Drop down
+    public List<String> getSearchFilterValues(){
+    	List<String> filterValues = new ArrayList<String>();
+    	int filterValuesSize = searchCriterianFilterOptions.size();
+    	for(int i = 0; i<filterValuesSize; i++){
+    		filterValues.add(searchCriterianFilterOptions.get(i).getText());
+    	}
+    	return filterValues;
+    }
+    
+    //10. Not Used - Selecting the required facet
+    public void selectFacet(String facetName){
+    	int totalFacets = facetsList.size();
+    	for(int i = 0; i<totalFacets; i++){
+    		if(facetsList.get(i).getAttribute("facet-target").replace("-", " ").equalsIgnoreCase(facetName)){
+    			facetsList.get(i).click();
+    		}
+    	}
+    }
+    
+  //11. Verifying whether the given facet is available in the displayed facet list
+    public boolean verifyGivenFacet(String facetNameToVerify){
+    	boolean facetAvailabilityFlag = false;
+    	int totalFacets = facetsList.size();
+    	for(int i = 0; i<totalFacets; i++){
+    		if((facetNameToVerify!=null) && (facetsList.get(i).getAttribute("id").equalsIgnoreCase(facetNameToVerify))){
+    			facetAvailabilityFlag = true;
+    		}
+    	}
+    	return facetAvailabilityFlag;
+    }
+        
+    //10. Validating the search Filter value whether it is available in the list or not.
+    public boolean validateSearchFilterValue(String validateSearchValue) throws InterruptedException{
+       	boolean searchValFlag = false;
+       	int filterValuesSize = searchCriterianFilterOptions.size();
+    	for(int i = 0; i<filterValuesSize; i++){
+       		if(validateSearchValue.contains(searchCriterianFilterOptions.get(i).getText().trim())){
+       			searchValFlag=true;
+       			break;
+       		}
+       	}  
+       	return searchValFlag;
+     }
+    
+    
+  	//17. get the customer name displayed
+  	public String getTiedCustomerValue(){
+  		return tiedTextCss.getText();
+  	}
+    
+  //18. verifies if the customer name who has logged in to the scm is correct or not
+  	public boolean verifyTiedCustomerValue(String expectedCustValue){
+  		boolean tiedCustomerFlag = false;
+  		if(expectedCustValue.trim().toLowerCase().contains(tiedTextCss.getText().toLowerCase().trim())){
+  			tiedCustomerFlag = true;
+  		}
+  		return tiedCustomerFlag;
+  	}
+  	
+    public void clickHomeButton() throws InterruptedException{
+    	
+    	homeButton.click();
+    	Thread.sleep(3000);
+    }
+  	
+  	public boolean waitforalertcomplete() throws InterruptedException{
+    	boolean mywait = (new WebDriverWait(driver, 30000))
+    			  .until(ExpectedConditions.textToBePresentInElement(By.cssSelector("div[id='mainNotificationPullDown'] div[class='ng-binding alert alert-info']"), "Complete!"));
+    	Thread.sleep(5000);
+    	
+    	return mywait;
+    }
+    
+}

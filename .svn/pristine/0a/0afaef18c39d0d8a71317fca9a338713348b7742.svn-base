@@ -1,0 +1,33 @@
+
+#############Application Related Details#####################
+# SCM Application URL, User Credentials and  Implicit Waittime.
+APP_URL=https://www-test.wwt.com/scm/#/
+SCM_LOGIN_USERNAME=nandanaj
+SCM_LOGIN_PASSWORD=WRa2u4rE
+DRIVERWAITTIME=60
+SCM_EXTERNAL_LOGIN_USERNAME=markwill@cisco.com
+SCM_EXTERNAL_LOGIN_PASSWORD=pass123
+# Below property to is set navigate no.of pages in SCM Search Results When no need to navigate all search pages.Use ALL if navigation needs all pages
+RESULTS_NAVIGATION_PAGES=2
+# Browser to be used for TestNG files. Use when Parallel/Grid execution
+TestNG_FacetSearching_BROWSERTYPE=IE
+TestNG_LineDetailDisplay_BROWSERTYPE=FF
+TestNG_SearchFilterDriver_BROWSERTYPE=FF
+TestNG_ExtUserSearchFilterDriver_BROWSERTYPE=FF
+TestNG_LineActions_BROWSERTYPE=FF
+
+#############Runmode Details#####################
+#RUN_MODE defines the mode of running scripts either Grid or Non-Grid. Possible Values are LOCAL or GRID
+RUN_MODE=LOCAL
+# HUB URL for Parallel/Grid Execution (Ensure you start Grid server)
+HUB_URL = http://localhost:4444/wd/hub/
+
+#############Data File Details#####################
+#Input Data file Type. Possible values are EXCEL or CSV based on file type you choose
+SCM_INPUT_DATA_FILE_TYPE=GRID
+# Excel Data sheet Details
+INPUTDATA_EXCEL_WORKBOOKNAME = SCM_TestExecution.xlsx
+INPUTDATA_EXCEL_SHEETNAME = Test_Data
+RESULT_EXCEL_SHEETNAME=Test_Results
+#CSV Data sheet Details
+INPUTDATA_CSV_WORKBOOKNAME = SCM_TestExecution.csv

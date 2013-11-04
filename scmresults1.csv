@@ -1,0 +1,62 @@
+TestCaseName,InternetExplorer,FireFox,GoogleChrome,Err_Msg,LastRunDateTimeStamp
+SearchAndFilter_2_0,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_2_1,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_2_2,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_2_3,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_3_0,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_3_1,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_3_2,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_3_3,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_42_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+ Size: 0,null,null,null,Index: 0,2013/10/18 15:18:36 - SearchAndFilter_42_1
+ Size: 0,null,null,null,Index: 0,2013/10/18 15:18:36 - SearchAndFilter_42_2
+SearchAndFilter_42_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_41_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_41_1,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_41_2,,Fail,,WWT Customer value is upper/lower case. expected [Jack Henry - Corporate] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_41_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_4_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_4_1,,Fail,,link for contract # to confirm it takes you to the correct contract tab. expected [true] but found [false],2013/10/18 15:18:36 - FF
+SearchAndFilter_4_2,,Fail,,WWT Customer value is upper/lower case. expected [Jack Henry - Corporate] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_4_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_5_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_5_1,,Fail,,expected [Jack Henry - Matrix Group] but found [Jack Henry - Corporate],2013/10/18 15:18:36 - FF
+SearchAndFilter_5_2,,Fail,,WWT Customer value is upper/lower case. expected [Boeing] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_5_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_6_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_6_1,,Fail,,expected [University of Arizona] but found [Jack Henry - Corporate],2013/10/18 15:18:36 - FF
+SearchAndFilter_6_2,,Fail,,WWT Customer value is upper/lower case. expected [University of Arizona] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_6_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_61_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_61_1,,Fail,,expected [University of Arizona] but found [Jack Henry - Corporate],2013/10/18 15:18:36 - FF
+SearchAndFilter_61_2,,Fail,,WWT Customer value is upper/lower case. expected [University of Arizona] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_61_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_7_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_7_1,,Fail,,expected [University of Arizona] but found [Jack Henry - Corporate],2013/10/18 15:18:36 - FF
+SearchAndFilter_7_2,,Fail,,WWT Customer value is upper/lower case. expected [University of Arizona] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_7_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_8_0_SingleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_8_1,,Fail,,expected [University of Arizona] but found [Jack Henry - Corporate],2013/10/18 15:18:36 - FF
+SearchAndFilter_8_2,,Fail,,WWT Customer value is upper/lower case. expected [University of Arizona] but found [Maritz],2013/10/18 15:18:36 - FF
+SearchAndFilter_8_0_MultipleSearch,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_20_0,,Pass,,,2013/10/18 15:18:36 - FF
+"""selector"":""div#content-main div#result-navigation div.notification-position button.btn""}
+Command duration or timeout: 60.09 seconds
+For documentation on this error",null,null,null,"Unable to locate element: {""method"":""css selector""","2013/10/18 15:18:36 -  please visit: http://seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '2.35.0'"
+"""selector"":""div[id='result-navigation'] div[class='pull-left notification-position'] span[class='notification not-found-notify-success notification-green ng-binding']""}
+Command duration or timeout: 60.10 seconds
+For documentation on this error",null,null,null,"Unable to locate element: {""method"":""css selector""","2013/10/18 15:18:36 -  please visit: http://seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '2.35.0'"
+SearchAndFilter_22_0,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_22_1,,Pass,,,2013/10/18 15:18:36 - FF
+SearchAndFilter_22_2,,Fail,,the 'String Values' in header of page matches what shows in the sort desc expected [false] but found [true],2013/10/18 15:18:36 - FF
+SearchAndFilter_22_3,,Pass,,,2013/10/18 15:18:36 - FF
+LineAndDetailDisplay_1_10,,Pass,,,2013/10/18 15:18:36 - FF
+LineAndDetailDisplay_1_11,,Pass,,,2013/10/18 15:18:36 - FF
+LineAndDetailDisplay_1_12,,Pass,,,2013/10/18 15:18:36 - FF
+LineAndDetailDisplay_1_13,,Pass,,,2013/10/18 15:18:36 - FF
+ revision: '8df0c6b',null,null,null,"Element is not currently visible and so may not be interacted with
+Command duration or timeout: 60.11 seconds
+Build info: version: '2.35.0'","2013/10/18 15:18:36 -  time: '2013-08-12 15:43:19'
+System info: os.name: 'Windows 7'"

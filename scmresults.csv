@@ -1,0 +1,4 @@
+"TestCaseName","InternetExplorer","FireFox","GoogleChrome","Err_Msg","LastRunDateTimeStamp"
+"LineAndDetailDisplay_1_14","","Fail","","Element is not currently visible and so may not be interacted with
+Command duration or timeout: 180.08 seconds
+Build info: version: '2.35.0'","2013/10/25 14:07:41 - FF"

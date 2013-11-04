@@ -1,0 +1,200 @@
+package com.wwt.scm;
+
+import java.io.FileInputStream;	
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Properties;
+
+import org.testng.annotations.DataProvider;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+
+public class GetDataProvider {
+
+	@DataProvider(name = "SCMGETCSVTestData")
+	public static String[][] readInputDataCSV(Method m) throws IOException{
+		
+		try{
+			String[] columnData = null;
+
+			int totalParametersToPass=0;
+			
+			String runTestCaseName=null;
+			//runTestCaseName = "SearchAndFilter_2_0";
+			runTestCaseName = m.getName();
+			//System.out.println(runTestCaseName);
+			
+			List content = null;
+			FileInputStream ConfigFile = new FileInputStream(".\\scm.properties");
+			Properties propertiesObj = new Properties();
+			propertiesObj.load(ConfigFile);
+			// Finding Row Count of input data sheet
+
+			CSVReader reader = new CSVReader(new FileReader(".\\"+propertiesObj.getProperty("INPUTDATA_CVSDATASHEETNAME")));
+			//System.out.println(propertiesObj.getProperty("INPUTDATA_CVSDATASHEETNAME"));
+			
+			columnData = reader.readNext();
+			//int columnsLength = columnData.length;
+			
+			content = reader.readAll();
+			int totalRowsCount = content.size();
+		
+			//Object rowData = content.get(102);
+			//columnData = (String[]) rowData;
+						
+			String[] ParametersToPass = null;
+			String[][] testCaseCountAndParamCount=null;
+			int totalTestCasesToRun = 0;
+			int testDataStartColNum = 5;
+					
+			for(int rowCount = 0; rowCount<totalRowsCount; rowCount++){
+				Object csvRowObect = content.get(rowCount);
+				columnData = (String[]) csvRowObect;
+				String CSV_TESTCASENAME =  columnData[0];
+				String CSV_GC_EXECSTATUS =  columnData[2];
+				
+				if(runTestCaseName.equalsIgnoreCase(CSV_TESTCASENAME) && CSV_GC_EXECSTATUS.equalsIgnoreCase("Y")){
+					totalTestCasesToRun++;
+					if(totalTestCasesToRun==1){
+						String CSV_TESTPARAMETERS = columnData[4];
+						ParametersToPass = CSV_TESTPARAMETERS.split(",");
+						totalParametersToPass = ParametersToPass.length;
+					
+					}
+				}	
+			}
+		
+		testCaseCountAndParamCount = new String[totalTestCasesToRun][totalParametersToPass];
+			
+		int runTestCaseCount=0; int colDataIterator = 1;
+			for(int rowCount = 0; rowCount<totalRowsCount; rowCount++){
+				
+				Object csvRowObect = content.get(rowCount);
+				columnData = (String[]) csvRowObect;
+				
+				String CSV_TESTCASENAME =  columnData[0];
+				//columnData[2] is given because Y/N is mentioned in the 2nd column
+				String CSV_FF_EXECSTATUS =  columnData[2]; 
+						
+				if(runTestCaseName.equalsIgnoreCase(CSV_TESTCASENAME) && CSV_FF_EXECSTATUS.equalsIgnoreCase("Y")){
+					String CSV_TESTPARAMETERS = columnData[4];
+					ParametersToPass = CSV_TESTPARAMETERS.split(",");
+					totalParametersToPass = ParametersToPass.length;
+					
+					colDataIterator = 0;
+					for(int colCount=testDataStartColNum;colCount<(testDataStartColNum+totalParametersToPass) ;colCount++){
+	    				if(columnData[colCount]!=""){
+	    					//System.out.println(columnData[colCount]);
+		    				testCaseCountAndParamCount[runTestCaseCount][colDataIterator] = columnData[colCount];
+		    			}else {
+			    			testCaseCountAndParamCount[runTestCaseCount][colDataIterator] = "";
+			    			break;
+			    		}    
+	    				colDataIterator++;
+			    	  }	
+	    			runTestCaseCount++;
+		    	}
+			}
+		//reader.close();
+		return testCaseCountAndParamCount; 	
+				
+		}catch(ArrayIndexOutOfBoundsException e){
+			e.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return new String[0][0];
+		}
+		
+	public static void resultUpdate(List<String> s) throws IOException{
+		
+		CSVWriter writer = new CSVWriter(new FileWriter(".\\scmresults.csv"));
+		List<String[]> resultList = new ArrayList<String[]>();
+		
+		String ResultHeadings = "TestCaseName"+","+"InternetExplorer"+","+"FireFox"+","+"GoogleChrome"+","+"Err_Msg"+","+"LastRunDateTimeStamp";
+		resultList.add((ResultHeadings).split(","));
+		
+		for(int i = 0; i<s.size(); i++){
+			String str[] = s.get(i).split(",");
+			resultList.add(updateResultCSV( str[0], new Boolean(str[1]), str[2], str[3]).split(","));
+		}
+		
+		writer.writeAll(resultList);
+		writer.close();
+	}	
+	
+	public static String updateResultCSV(String testcasename, boolean status, String browsername, String err_msg) throws IOException{
+		String[] insertString = new String[6];
+	
+		insertString[0] = testcasename;
+		if(status){
+		if(browsername.equalsIgnoreCase("IE")){
+			insertString[1] = "Pass";
+			insertString[2] = "";
+			insertString[3] = "";
+		} else if(browsername.equalsIgnoreCase("FF")){
+			insertString[1] = "";
+			insertString[2] = "Pass";
+			insertString[3] = "";
+		} else if(browsername.equalsIgnoreCase("GC")){
+			insertString[1] = "";
+			insertString[2] = "";
+			insertString[3] = "Pass";
+		}
+		insertString[4] = "";
+		}else{
+			if(browsername.equalsIgnoreCase("IE")){
+				insertString[1] = "Fail";
+				insertString[2] = "";
+				insertString[3] = "";
+			} else if(browsername.equalsIgnoreCase("FF")){
+				insertString[1] = "";
+				insertString[2] = "Fail";
+				insertString[3] = "";
+			} else if(browsername.equalsIgnoreCase("GC")){
+				insertString[1] = "";
+				insertString[2] = "";
+				insertString[3] = "Fail";
+			}
+			insertString[4] = err_msg;
+		}
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+   		Calendar cal = Calendar.getInstance(); 	
+   		insertString[5] = dateFormat.format(cal.getTime())+ " - " + browsername;
+   		String s = insertString[0]+","+insertString[1]+","+insertString[2]+","+insertString[3]+","+insertString[4]+","+insertString[5];
+   		
+   		System.out.println(s);
+   		//writer.writeNext(insertString);
+		return s;
+	}
+	
+		
+/*public static String addResultHeaders(String testCaseName, String IE, String FF, String GC, String LastRunDate, String errMsg){
+	
+	String s1 = null;
+	String[] insertString = new String[6];
+	insertString[0]=testCaseName;
+	insertString[1]=IE;
+	insertString[2]=FF;
+	insertString[3]=GC;
+	insertString[4]=LastRunDate;
+	insertString[5]=errMsg;
+					
+	s1 = insertString[0]+","+insertString[1]+","+insertString[2]+","+insertString[3]+","+insertString[4]+","+insertString[5];
+		
+	return s1;
+}
+*/
+
+	
+}
+	

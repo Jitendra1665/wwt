@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="WWT SCM Test Suite" duration-ms="81853" started-at="2013-11-04T12:58:09Z" finished-at="2013-11-04T12:59:31Z">
+    <groups>
+    </groups>
+    <test name="WWT SCM ExtUserSearchFilterDriver" duration-ms="81853" started-at="2013-11-04T12:58:09Z" finished-at="2013-11-04T12:59:31Z">
+      <class name="com.wwt.scm.TestNG_ExtUserSearchFilterDriver">
+        <test-method status="PASS" signature="launchAndLogin()[pri:0, instance:com.wwt.scm.TestNG_ExtUserSearchFilterDriver@51e7c4d4]" name="launchAndLogin" is-config="true" duration-ms="31677" started-at="2013-11-04T18:28:13Z" finished-at="2013-11-04T18:28:45Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- launchAndLogin -->
+        <test-method status="PASS" signature="LineAndDetailDisplay_2_2(java.lang.String)[pri:0, instance:com.wwt.scm.TestNG_ExtUserSearchFilterDriver@51e7c4d4]" name="LineAndDetailDisplay_2_2" duration-ms="43982" started-at="2013-11-04T18:28:45Z" data-provider="getData" finished-at="2013-11-04T18:29:29Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[test]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- LineAndDetailDisplay_2_2 -->
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:com.wwt.scm.TestNG_ExtUserSearchFilterDriver@51e7c4d4]" name="afterTest" is-config="true" duration-ms="1773" started-at="2013-11-04T18:29:29Z" finished-at="2013-11-04T18:29:31Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterTest -->
+      </class> <!-- com.wwt.scm.TestNG_ExtUserSearchFilterDriver -->
+    </test> <!-- WWT SCM ExtUserSearchFilterDriver -->
+  </suite> <!-- WWT SCM Test Suite -->
+</testng-results>

@@ -1,0 +1,142 @@
+/*****************************************************
+ * Purpose: Page Object File file for line status
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: Aug-26-2013
+ *****************************************************/
+
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class LineStatusFacet {
+		protected final WebDriver driver;
+
+		//@FindBy(css="a[id='lineSatus'] i[id='line-status-icon']")
+		@FindBy(css="div.nav-collapse ul.nav li.facet-nav-button a#calendarSearch")
+		private WebElement lineStatusIcon;
+
+		//@FindBy(css="div[id='lineSatus-data'] div[class='lead']")//ng-hide="!userHasPermission('viewUnpublishedLines')"
+		@FindBy(css="div.modal div.container-fluid div.span6 div.row-fluid div.lead")
+		private List<WebElement> statusLineTypes;
+		
+		@FindBy(css="div[id='lineSatus-data'] div[class='row-fluid']")
+		private List<WebElement> cssAllVisibleAndUnVisbileLineStatusTypes;
+				
+		@FindBy(css="div[id='lineSatus-data'] label")
+		private List<WebElement> statusLineTypeCheckBoxNames;
+				
+		//@FindBy(css="i[id='line-status-close'][class*='icon-remove']")
+		@FindBy(css="div.modal i#date-search-close.icon-remove")
+		private WebElement closeLineSFacet;
+				
+		//@FindBy(css="input[class='ng-pristine ng-valid'][type*='checkbox']")
+		@FindBy(css="div.row-fluid div.checkbox-container label.checkbox")
+		private List<WebElement> statusChecboxesList;
+		
+		@FindBy(css="div[id*='lineStatus-data'] div[ng-hide*='!userHasPermission'] div.lead")
+		private List<WebElement> hiddenLineStatusHeadings;
+		
+		@FindBy(css="div[id*='lineStatus-data'] div[ng-hide*='!userHasPermission'] label")
+		private List<WebElement> hiddenLineStatusHeaderValues;
+		
+		
+		List<WebElement> labelsList = null;
+		
+		//int LineStatusTypeNumber = 0;
+		
+		public LineStatusFacet(WebDriver driver) {
+	        this.driver = driver;
+	    }
+	
+	
+		//1. Clicking on Line Status Icon
+		public void clickLineStatusIcon() throws InterruptedException{
+	    		Thread.sleep(2000);
+				lineStatusIcon.click();
+				Thread.sleep(2000);
+	    }
+	    
+		public void closeLinsestatusFacet() throws InterruptedException{
+			closeLineSFacet.click();
+			Thread.sleep(2000);
+		}
+		
+		//2. Verifying if the Required List Type is available or not
+		public boolean verifyingGivenlineStatus(String statusLineTypeName){
+			boolean statusTypeAvailability = false;
+			List <WebElement> lineStatusTypes_List = statusLineTypes;
+			int lineStatusTypesCount = lineStatusTypes_List.size();
+			//int j=1;
+			for(int i=0;i<lineStatusTypesCount; i++){
+				String listName = lineStatusTypes_List.get(i).getText();
+				if(listName.toLowerCase().trim().contains(statusLineTypeName.toLowerCase().trim())){
+				  statusTypeAvailability = true;
+				//  LineStatusTypeNumber=j;
+				  break;
+				}
+				//j++;
+			}
+			return statusTypeAvailability;
+		}
+	 
+		public boolean selectLineCheckbox(String checkBoxToSelect){
+			for( WebElement i : statusChecboxesList){
+				if (i.getText().toLowerCase().trim().contains(checkBoxToSelect.toLowerCase().trim())){
+					i.click();
+					return true;
+				}	
+			}
+			return false;
+		}
+			
+	//4. Verifying the Hidden Line Status values for External User
+	public boolean verifyHiddenLineStatusHeaders(String hiddenLineStatusHeaders){
+		for(int i = 0; i<hiddenLineStatusHeadings.size(); i++){
+			if(hiddenLineStatusHeaders.toLowerCase().trim().contains(hiddenLineStatusHeadings.get(i).getText().trim())){
+				return true;
+			}
+		}
+		return false;
+	}
+				
+	//5. Verifying the Hidden Line Status values for External User
+	public boolean verifyHiddenLineStatusValues(String hiddenLineStatusValues){
+		for(int i = 0; i<hiddenLineStatusHeaderValues.size(); i++){
+			if(hiddenLineStatusValues.toLowerCase().trim().contains(hiddenLineStatusHeaderValues.get(i).getText().trim())){
+				return true;
+			}
+		}
+		return false;
+	}
+		
+		
+		
+		
+}		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

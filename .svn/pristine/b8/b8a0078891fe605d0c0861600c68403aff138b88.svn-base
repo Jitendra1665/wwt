@@ -1,0 +1,288 @@
+/*****************************************************
+ * Purpose: Page Object File file for line status
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: Aug-26-2013
+ *****************************************************/
+
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class LineStatusFacet {
+		protected final WebDriver driver;
+
+		//@FindBy(css="a[id='lineSatus'] i[id='line-status-icon']")
+		@FindBy(css="div.nav-collapse ul.nav li.facet-nav-button a#calendarSearch")
+		private WebElement lineStatusIcon;
+
+		//@FindBy(css="div[id='lineSatus-data'] div[class='lead']")//ng-hide="!userHasPermission('viewUnpublishedLines')"
+		@FindBy(css="div.modal div.container-fluid div.span6 div.row-fluid div.lead")
+		private List<WebElement> statusLineTypes;
+		
+		@FindBy(css="div[id='lineSatus-data'] div[class='row-fluid']")
+		private List<WebElement> cssAllVisibleAndUnVisbileLineStatusTypes;
+				
+		@FindBy(css="div[id='lineSatus-data'] label")
+		private List<WebElement> statusLineTypeCheckBoxNames;
+				
+		//@FindBy(css="i[id='line-status-close'][class*='icon-remove']")
+		@FindBy(css="div.modal i#date-search-close.icon-remove")
+		private WebElement closeLineSFacet;
+				
+		//@FindBy(css="input[class='ng-pristine ng-valid'][type*='checkbox']")
+		@FindBy(css="div.row-fluid div.checkbox-container label.checkbox")
+		private List<WebElement> statusChecboxesList;
+		
+		List<WebElement> labelsList = null;
+		
+		//int LineStatusTypeNumber = 0;
+		
+		public LineStatusFacet(WebDriver driver) {
+	        this.driver = driver;
+	    }
+	
+	
+		//1. Clicking on Line Status Icon
+		public void clickLineStatusIcon() throws InterruptedException{
+	    		Thread.sleep(2000);
+				lineStatusIcon.click();
+				Thread.sleep(2000);
+	    }
+	    
+		public void closeLinsestatusFacet() throws InterruptedException{
+			closeLineSFacet.click();
+			Thread.sleep(2000);
+		}
+		
+		//2. Verifying if the Required List Type is available or not
+		public boolean verifyingGivenlineStatus(String statusLineTypeName){
+			boolean statusTypeAvailability = false;
+			List <WebElement> lineStatusTypes_List = statusLineTypes;
+			int lineStatusTypesCount = lineStatusTypes_List.size();
+			//int j=1;
+			for(int i=0;i<lineStatusTypesCount; i++){
+				String listName = lineStatusTypes_List.get(i).getText();
+				if(listName.toLowerCase().trim().contains(statusLineTypeName.toLowerCase().trim())){
+				  statusTypeAvailability = true;
+				//  LineStatusTypeNumber=j;
+				  break;
+				}
+				//j++;
+			}
+			return statusTypeAvailability;
+		}
+	 
+		public boolean selectLineCheckbox(String checkBoxToSelect){
+			for( WebElement i : statusChecboxesList){
+				if (i.getText().toLowerCase().trim().contains(checkBoxToSelect.toLowerCase().trim())){
+					i.click();
+					return true;
+				}	
+			}
+			return false;
+		}
+}		
+		/*
+		 //3. Selecting the required Check box from the list.
+		 public void selectCheckBox(int filteredListTypeNumber, String checkBoxToSelect){
+			int checkBoxNumber = 0;
+			String xpathCheckBoxList = "//*[@id='lineSatus-data']/div/div/div["+
+						filteredListTypeNumber+"]/label[@class='checkbox']/input";
+			 
+			 List <WebElement> checkBoxesList = driver.findElements(By.xpath(xpathCheckBoxList));
+			 String checkboxNameToSelect = null;
+			 int checkBoxesListSize = checkBoxesList.size();
+			 int j=1;
+			 for(int i=0;i<checkBoxesListSize;i++){
+				 checkboxNameToSelect = checkBoxesList.get(i).getAttribute("ng-model");
+				 if(checkboxNameToSelect.contains(checkBoxToSelect)){
+				 	checkBoxNumber=j;			 		
+				 }
+				 j++;
+			 }
+			 //*[@id='lineSatus-data']//div/div/div[3]/label/input
+			 if(checkBoxesListSize>0){
+				 String xpathCheckBox = "//*[@id='lineSatus-data']/div/div/div["+
+							filteredListTypeNumber+"]/label["+checkBoxNumber+"]/input";
+				driver.findElement(By.xpath(xpathCheckBox)).click(); 	 
+			 		
+			 }else{
+				 System.out.println("There is no Check Box Available");
+			 }
+		 } 
+	
+	*/
+		/*
+		//External User 
+		int hiddenCounter = 0;
+		public int ExternalUser_getHiddenCounter(int i){
+				//System.out.println(cssAllVisibleAndUnVisbileLineStatusTypes.get(i).getAttribute("ng-hide"));
+				if(! cssAllVisibleAndUnVisbileLineStatusTypes.get(i).isDisplayed()){
+					hiddenCounter=1;
+				}
+				return hiddenCounter;
+		}
+		
+		int ExternUser_LineStatusTypeNum= 0;
+			//Verifying if the Required List Type is available or not
+				public boolean ExternUser_verifyGivenLineStatus(String statusLineTypeName){
+					boolean statusTypeAvailability = false;
+					List <WebElement> lineStatusTypes_List = statusLineTypes;
+					int lineStatusTypesCount = lineStatusTypes_List.size();
+					int j=1;
+					for(int i=0;i<lineStatusTypesCount; i++){
+						ExternalUser_getHiddenCounter(i);
+						String listName = lineStatusTypes_List.get(i).getText();
+						if(statusLineTypes.get(i).isDisplayed()){
+							if(statusLineTypeName.toLowerCase().contains(listName.toLowerCase())){
+								statusTypeAvailability = true;
+								ExternUser_LineStatusTypeNum=j+hiddenCounter;
+								break;
+							}j++;
+						}else if(! statusLineTypeName.contains(listName)){
+							statusTypeAvailability = false;
+							break;
+						}
+					}return statusTypeAvailability;
+				}
+				
+				 //3. Selecting the required Check box from the list.
+				 public void ExternUser_selectCheckBox(String checkBoxToSelect){
+					String xpathCheckBoxList = "//*[@id='lineSatus-data']/div/div/div["+
+							ExternUser_LineStatusTypeNum+"]/label[@class='checkbox']/input";
+					 //System.out.println(xpathCheckBoxList);
+					 List <WebElement> checkBoxesList = driver.findElements(By.xpath(xpathCheckBoxList));
+					 String checkboxNameToSelect = null;
+					 int checkBoxesListSize = checkBoxesList.size();
+					// int j=1;
+					 for(int i=0;i<checkBoxesListSize;i++){
+						 checkboxNameToSelect = checkBoxesList.get(i).getAttribute("ng-model");
+						 if(checkboxNameToSelect.contains(checkBoxToSelect)){
+						 	//checkBoxNumber=j;		
+							 checkBoxesList.get(i).click(); 
+						 }
+						// j++;
+					 }
+					 
+					 //*[@id='lineSatus-data']//div/div/div[3]/label/input
+					 if(checkBoxesListSize==0){
+						 System.out.println("There is no Check Box Available");
+					 }
+				 } 		
+				
+		
+				public boolean ExternUSer_verifyLineStatusName(String lineStatusType, String verifyGivenName){
+					 boolean verifyLineStatusNameFlag = false;
+					 for(int i = 0; i<statusLineTypes.size(); i++){
+						 
+						 if(lineStatusType.trim().contains(statusLineTypes.get(i).getText().trim())){
+							 System.out.println(lineStatusType+" : "+statusLineTypes.get(i).getText().trim());
+							 	for(int j = 0; j<statusLineTypeCheckBoxNames.size(); j++){
+								 if(verifyGivenName.trim().contains(statusLineTypeCheckBoxNames.get(i).getText().trim())){
+									 System.out.println(verifyGivenName+" : "+statusLineTypeCheckBoxNames.get(i).getText().trim());
+									 verifyLineStatusNameFlag = true;
+									 break;
+								 }
+							 }
+						 }
+					 } 
+					 return verifyLineStatusNameFlag;
+				 }
+}
+				 
+		
+		/* public int getLineStatusCheckBoxNum(String lineStatusType){
+			 int lineTypeCounter = 0;
+
+			 List<WebElement> labelsList = driver.findElements(By.xpath(xpath));
+			 System.out.println(xpath);
+			 for(int i = 0; i<labelsList.size(); i++){
+				 if(lineStatusType.contains(labelsList.get(i).getText())){
+					 lineTypeCounter=i+1;
+				 }
+			 }
+			 return lineTypeCounter; 
+			 
+			//div[@id='lineSatus-data']//div//div[2]/label
+		 }
+		 
+}
+				
+
+
+*/
+
+//Need to work on the below code - please don't touch
+/* 	public int getLineStatusTypeNum(String lineStatusType){
+		 int lineTypeCounter = 0;
+		 
+List<WebElement> labelsList = driver.findElements(By.xpath("//div[@id='lineSatus-data']//div[@class='row-fluid']/div"));
+System.out.println(labelsList.size());
+		 for(int i = 0; i<labelsList.size(); i++){
+			/* if(lineStatusType.contains(labelsList.get(i).getText())){
+				 lineTypeCounter=i+1;
+			 }  
+			 
+			 if(labelsList.get(i).getText().trim().contains("Line Status")){
+				 lineTypeCounter=1;
+			 }else if(labelsList.get(i).getText().trim().contains("End of Support")){
+				 lineTypeCounter=3;
+			 }else if(labelsList.get(i).getText().trim().contains("Publish Flag Filter")){
+				 lineTypeCounter=2;
+			 }
+		 }
+		 return lineTypeCounter;
+	 } 
+	 
+	 
+	 public int getLineStatusCheckBoxNum(String lineStatusType){
+		 int lineTypeCounter = 0;
+		// String xpath = "//div[@id='lineSatus-data']//div//div["+getLineStatusTypeNum(lineStatusType)+"]/label";
+		 List<WebElement> labelsList = driver.findElements(By.xpath(xpath));
+		 System.out.println(xpath);
+		 for(int i = 0; i<labelsList.size(); i++){
+			 if(lineStatusType.contains(labelsList.get(i).getText())){
+				 lineTypeCounter=i+1;
+			 }
+		 }
+		 return lineTypeCounter; 
+		 
+		//div[@id='lineSatus-data']//div//div[2]/label
+	 }
+	   
+	 
+	  //3. Selecting the required Check box from the list.
+		 public void selectCheckBox(String LineStatusTypeList, String checkBoxNameToSelect){
+			 for(int i = 0; i<statusLineTypes.size(); i++){
+				 if(LineStatusTypeList.trim().contains(statusLineTypes.get(i).getText().trim())){
+					 for(int j = 0; j<statusLineTypeCheckBoxNames.size(); j++){
+						 if(checkBoxNameToSelect.trim().contains(statusLineTypeCheckBoxNames.get(i).getText().trim())){
+							 statusLineTypeCheckBoxNames.get(i).click();
+						 }
+					 }
+				 }
+			 } 
+		 } 
+		 
+	 public boolean verifyLineStatusName(String lineStatusType, String verifyGivenName){
+		 boolean verifyLineStatusNameFlag = false;
+		 int LineStatusTypeCount = getLineStatusTypeNum(lineStatusType);
+		// System.out.println("LineStatusTypeCount : "+LineStatusTypeCount);
+		 for(int i = 0; i<LineStatusTypeCount; i++){
+			 int checkBoxNum = getLineStatusCheckBoxNum(lineStatusType);
+			 System.out.println("checkBoxNum : "+checkBoxNum);
+			 for(int j = 0; j<checkBoxNum; j++){
+				if(verifyGivenName.trim().contains(labelsList.get(j).getText().trim())){
+					verifyLineStatusNameFlag = true;
+				}
+			 }
+		 }
+		 return verifyLineStatusNameFlag;
+	 } */
+	 

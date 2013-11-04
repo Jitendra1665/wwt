@@ -1,0 +1,35 @@
+package com.wwt.scm;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+public class CommonUtilLibrary {
+	
+    public static int readcountfromfacetline(String displayedChannel){
+    	String recordnum=""; 
+	    Pattern p =  Pattern.compile("\\((.*?)\\)",Pattern.DOTALL);
+		Matcher matcher = p.matcher(displayedChannel.trim());
+		while(matcher.find()){
+		   	recordnum = matcher.group(1);
+		   	recordnum = recordnum.replace(",","");  
+		}
+    	if(recordnum.equalsIgnoreCase("") ){
+    		recordnum = "0";
+    	}
+	   	 return (new Integer(recordnum));   
+    }
+    
+    
+    public static void screenCapture(WebDriver driver, String screenShotName) throws IOException{
+    	File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		FileUtils.copyFile(scrFile, new File(".//"+screenShotName+".png"));
+    }
+
+}

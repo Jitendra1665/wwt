@@ -1,0 +1,296 @@
+package com.wwt.scm;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.testng.annotations.DataProvider;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+
+public class GetDataProvider {
+
+	@DataProvider(name = "getData")
+	public static String[][] readInputData(Method m) throws IOException {
+		try {
+			int totalParametersToPass = 0;
+			String runTestCaseName = null;
+			runTestCaseName = m.getName();
+			FileInputStream ConfigFile = new FileInputStream(".\\scm.properties");
+			Properties propertiesObj = new Properties();
+			propertiesObj.load(ConfigFile);
+			if (propertiesObj.getProperty("SCM_INPUT_DATA_FILE_TYPE").toUpperCase().equals("CSV")) {
+				return getCsvData(totalParametersToPass, runTestCaseName, propertiesObj);
+			}
+			else {
+				return getExcelData(m, propertiesObj);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new String[0][0];
+	}
+
+	private static String[][] getCsvData(int totalParametersToPass,	String runTestCaseName, Properties propertiesObj)
+										throws FileNotFoundException, IOException {
+		String[] columnData;
+		List<?> content;
+		CSVReader reader = new CSVReader(new FileReader(".\\"+ propertiesObj.getProperty("INPUTDATA_CSV_WORKBOOKNAME")));
+		columnData = reader.readNext();
+		content = reader.readAll();
+		int totalRowsCount = content.size();
+		String[] ParametersToPass = null;
+		String[][] testCaseCountAndParamCount = null;
+		int totalTestCasesToRun = 0;
+		int testDataStartColNum = 5;
+		for (int rowCount = 0; rowCount < totalRowsCount; rowCount++) {
+			Object csvRowObect = content.get(rowCount);
+			columnData = (String[]) csvRowObect;
+			String CSV_TESTCASENAME = columnData[0];
+			String CSV_GC_EXECSTATUS = columnData[2];
+			if (runTestCaseName.equalsIgnoreCase(CSV_TESTCASENAME) && CSV_GC_EXECSTATUS.equalsIgnoreCase("Y")) {
+				totalTestCasesToRun++;
+				if (totalTestCasesToRun == 1) {
+					String CSV_TESTPARAMETERS = columnData[4];
+					ParametersToPass = CSV_TESTPARAMETERS.split(",");
+					totalParametersToPass = ParametersToPass.length;
+
+				}
+			}
+		}
+		testCaseCountAndParamCount = new String[totalTestCasesToRun][totalParametersToPass];
+		int runTestCaseCount = 0;
+		int colDataIterator = 1;
+		for (int rowCount = 0; rowCount < totalRowsCount; rowCount++) {
+			Object csvRowObect = content.get(rowCount);
+			columnData = (String[]) csvRowObect;
+			String CSV_TESTCASENAME = columnData[0];
+			// columnData[2] is given because Y/N is mentioned in the 2nd column
+			String CSV_FF_EXECSTATUS = columnData[2];
+			if (runTestCaseName.equalsIgnoreCase(CSV_TESTCASENAME)&& CSV_FF_EXECSTATUS.equalsIgnoreCase("Y")) {
+				String CSV_TESTPARAMETERS = columnData[4];
+				ParametersToPass = CSV_TESTPARAMETERS.split(",");
+				totalParametersToPass = ParametersToPass.length;
+				colDataIterator = 0;
+				for (int colCount = testDataStartColNum; colCount < (testDataStartColNum + totalParametersToPass); colCount++) {
+					if (columnData[colCount] != "") {
+						testCaseCountAndParamCount[runTestCaseCount][colDataIterator] = columnData[colCount];
+					} else {
+						testCaseCountAndParamCount[runTestCaseCount][colDataIterator] = "";
+						break;
+					}
+					colDataIterator++;
+				}
+				runTestCaseCount++;
+			}
+		}
+		// reader.close();
+		return testCaseCountAndParamCount;
+	}
+
+	private static String[][] getExcelData(Method m, Properties propertiesObj) throws FileNotFoundException, IOException, InvalidFormatException {
+		int rowCount = 0, yrowcount = 0, ycolcount = 0;
+		String exceltestcasename = null, execStatus = null, params = null;
+		String testcasename = m.getName();
+		FileInputStream iStream = new FileInputStream(".\\"+ propertiesObj.getProperty("INPUTDATA_EXCEL_WORKBOOKNAME"));
+		Workbook workbook = WorkbookFactory.create(iStream);
+		Sheet worksheet = workbook.getSheet(propertiesObj.getProperty("INPUTDATA_EXCEL_SHEETNAME"));
+		rowCount = worksheet.getPhysicalNumberOfRows();
+		Row currentrow = worksheet.getRow(0);
+		// Reading the actual Row count and Column count for test case
+		for (int i = 1; i < rowCount; i++) {
+			currentrow = worksheet.getRow(i);
+			exceltestcasename = currentrow.getCell(0).toString();
+			execStatus = currentrow.getCell(1).toString();
+			// identifying no.of times the test cases need to be executed.
+			if (exceltestcasename.equalsIgnoreCase(testcasename) && execStatus.equalsIgnoreCase("Y")) {
+				yrowcount = yrowcount + 1;
+				if (yrowcount == 1) {
+					params = currentrow.getCell(2).toString();
+					String[] myparams = params.split(",");
+					ycolcount = myparams.length;
+				}
+			}
+		}
+		String[][] mydata = new String[yrowcount][ycolcount];
+		int datarow = 0, datacol = 0;
+		// Reading test case data into mydata array
+		for (int i = 1; i < rowCount; i++) {
+			currentrow = worksheet.getRow(i);
+			exceltestcasename = currentrow.getCell(0).toString();
+			execStatus = currentrow.getCell(1).toString();
+			if (exceltestcasename.equalsIgnoreCase(testcasename)&& execStatus.equalsIgnoreCase("Y")) {
+				datarow = datarow + 1;
+				datacol = 0;
+				for (int j = 3; j < (ycolcount + 3); j++) {
+					datacol = datacol + 1;
+					if (currentrow.getCell(j) != null) {
+						mydata[datarow - 1][datacol - 1] = currentrow.getCell(j).toString();
+					} else {
+						mydata[datarow - 1][datacol - 1] = "";
+					}
+				}
+			}
+		}
+		iStream.close();
+		return mydata;
+	}
+
+	public static void resultUpdate(List<String> s) throws IOException {
+		CSVWriter writer = new CSVWriter(new FileWriter(".\\scmresults.csv"));
+		List<String[]> resultList = new ArrayList<String[]>();
+		String ResultHeadings = "TestCaseName" + "," + "InternetExplorer" + ","
+								+ "FireFox" + "," + "GoogleChrome" + "," + "Err_Msg" + "," + "LastRunDateTimeStamp";
+		resultList.add((ResultHeadings).split(","));
+		for (int i = 0; i < s.size(); i++) {
+			String str[] = s.get(i).split(",");
+			resultList.add(updateResultCSV(str[0], new Boolean(str[1]), str[2],str[3]).split(","));
+		}
+		writer.writeAll(resultList);
+		writer.close();
+	}
+
+	public static String updateResultCSV(String testcasename, boolean status,
+										 String browsername, String err_msg) throws IOException {
+		String[] insertString = new String[6];
+		insertString[0] = testcasename;
+		if (status) {
+			if (browsername.equalsIgnoreCase("IE")) {
+				insertString[1] = "Pass";
+				insertString[2] = "";
+				insertString[3] = "";
+			} else if (browsername.equalsIgnoreCase("FF")) {
+				insertString[1] = "";
+				insertString[2] = "Pass";
+				insertString[3] = "";
+			} else if (browsername.equalsIgnoreCase("GC")) {
+				insertString[1] = "";
+				insertString[2] = "";
+				insertString[3] = "Pass";
+			}
+			insertString[4] = "";
+		} else {
+			if (browsername.equalsIgnoreCase("IE")) {
+				insertString[1] = "Fail";
+				insertString[2] = "";
+				insertString[3] = "";
+			} else if (browsername.equalsIgnoreCase("FF")) {
+				insertString[1] = "";
+				insertString[2] = "Fail";
+				insertString[3] = "";
+			} else if (browsername.equalsIgnoreCase("GC")) {
+				insertString[1] = "";
+				insertString[2] = "";
+				insertString[3] = "Fail";
+			}
+			insertString[4] = err_msg;
+		}
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		insertString[5] = dateFormat.format(cal.getTime()) + " - "+ browsername;
+		String s = insertString[0] + "," + insertString[1] + ","+ insertString[2] + "," + insertString[3] + ","
+					+ insertString[4] + "," + insertString[5];
+		// writer.writeNext(insertString);
+		return s;
+	}
+
+	public static void updateResultExcel(boolean status, String err_msg,String testcasename, String browsername) {
+		try {
+			int rowCount = 0;
+			String exceltestcasename = null;
+			boolean foundTestcase = false;
+			// Loading Properties file
+			FileInputStream ConfigFile = new FileInputStream(".\\scm.properties");
+			Properties propertiesObj = new Properties();
+			propertiesObj.load(ConfigFile);
+			// Finding Row Count of input data sheet
+			FileInputStream iStream = new FileInputStream(".\\"+ propertiesObj.getProperty("INPUTDATA_EXCEL_WORKBOOKNAME"));
+			Workbook workbook = WorkbookFactory.create(iStream);
+			Sheet worksheet = workbook.getSheet(propertiesObj.getProperty("RESULT_EXCEL_SHEETNAME"));
+			rowCount = worksheet.getLastRowNum();
+			Row currentrow = worksheet.getRow(0);
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			for (int i = 1; i < rowCount; i++) {
+				currentrow = worksheet.getRow(i);
+				exceltestcasename = currentrow.getCell(0).toString();
+				if (exceltestcasename.equalsIgnoreCase(testcasename)) {
+					foundTestcase = true;
+					if (status) {
+						if (browsername.equalsIgnoreCase("IE")) {
+							currentrow.createCell(1).setCellValue("Pass");
+						} else if (browsername.equalsIgnoreCase("FF")) {
+							currentrow.createCell(2).setCellValue("Pass");
+						} else if (browsername.equalsIgnoreCase("GC")) {
+							currentrow.createCell(3).setCellValue("Pass");
+						}
+						currentrow.createCell(5).setCellValue("");
+					} else {
+						if (browsername.equalsIgnoreCase("IE")) {
+							currentrow.createCell(1).setCellValue("Fail");
+						} else if (browsername.equalsIgnoreCase("FF")) {
+							currentrow.createCell(2).setCellValue("Fail");
+						} else if (browsername.equalsIgnoreCase("GC")) {
+							currentrow.createCell(3).setCellValue("Fail");
+						}
+						currentrow.createCell(5).setCellValue(err_msg);
+					}
+					currentrow.createCell(4).setCellValue(dateFormat.format(cal.getTime()) + " - "+ browsername);
+					break;
+				}
+			}
+
+			if (!foundTestcase) {
+				rowCount++;
+				currentrow = worksheet.createRow(rowCount);
+				currentrow.createCell(0).setCellValue(testcasename);
+				if (status) {
+					if (browsername.equalsIgnoreCase("IE")) {
+						currentrow.createCell(1).setCellValue("Pass");
+					} else if (browsername.equalsIgnoreCase("FF")) {
+						currentrow.createCell(2).setCellValue("Pass");
+					} else if (browsername.equalsIgnoreCase("GC")) {
+						currentrow.createCell(3).setCellValue("Pass");
+					}
+					currentrow.createCell(5).setCellValue("");
+				} else {
+					if (browsername.equalsIgnoreCase("IE")) {
+						currentrow.createCell(1).setCellValue("Fail");
+					} else if (browsername.equalsIgnoreCase("FF")) {
+						currentrow.createCell(2).setCellValue("Fail");
+					} else if (browsername.equalsIgnoreCase("GC")) {
+						currentrow.createCell(3).setCellValue("Fail");
+					}
+					currentrow.createCell(5).setCellValue(err_msg);
+				}
+				currentrow.createCell(4).setCellValue(dateFormat.format(cal.getTime()) + " - " + browsername);
+			}
+			FileOutputStream oStream = new FileOutputStream(".\\"+ propertiesObj.getProperty("INPUTDATA_EXCEL_WORKBOOKNAME"));
+			workbook.write(oStream);
+			oStream.flush();
+			oStream.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}

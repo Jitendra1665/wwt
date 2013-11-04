@@ -1,0 +1,152 @@
+package com.wwt.servicenow;
+
+import java.io.FileInputStream;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.wwt.scm.GetInputData;
+
+
+public class TestNG_ServiceNow {
+
+	protected WebDriver driver = null;
+	
+	FileInputStream ConfigFIS = null;
+	Properties scriptproperties = null;
+	String BROWSER = null;
+	LoginPage loginPage = null;
+	SetDriverConfig setDriver;
+	HomePage homePage=null;
+	ChangeRequestPage crPage=null;
+	
+	@BeforeMethod(enabled=true)
+	public void launchAndLogin() throws Exception {
+		try{
+			ConfigFIS = new FileInputStream(".\\servicenow.properties");
+			scriptproperties = new Properties();
+			scriptproperties.load(ConfigFIS);
+			BROWSER = scriptproperties.getProperty("BROWSERTYPE");
+			setDriver = PageFactory.initElements(driver,SetDriverConfig.class);
+			driver = setDriver.getDriver(BROWSER);	
+			setDriver.launchBroswer(scriptproperties);
+			loginPage = PageFactory.initElements(driver,LoginPage.class);
+			String userId = scriptproperties.getProperty("LOGIN_USERNAME");
+			String passWord = scriptproperties.getProperty("LOGIN_PASSWORD");
+			loginPage.loginApplication(userId, passWord);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	/*@AfterMethod(enabled=true)
+	public void closeBrowser() throws Exception {
+		driver.quit();
+	} */
+	@Test(enabled=true, priority=5, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void ServiceNow_Change_TC1(String ConfItem,String Priority, String Approval, String CRState, String Category,
+									String AssignGroup, String Peoject, String ProjectTask,	String ShortDesciption,
+									String Justification,String BusinessImpact, String ServiceOutage,String ResourceRequirement,
+									String ImplementationStrategy,String ReleaseType, String AddhocApprover) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickCreateNewChange();
+			crPage = PageFactory.initElements(driver,ChangeRequestPage.class);
+			crPage.switchFrame();
+			crPage.enterConfItem(ConfItem);
+			crPage.selectPriority(Priority);
+			crPage.selectApproval(Approval);
+			crPage.selectCRState(CRState);
+			crPage.selectCatagory(Category);
+			crPage.enterAssignGroup(AssignGroup);
+			crPage.enterProject(Peoject);
+			crPage.enterProjectTask(ProjectTask);
+			crPage.enterShortDescription(ShortDesciption);
+			crPage.enterJustification(Justification);
+			crPage.selectBusiImpact(BusinessImpact);
+			crPage.selectServiceOutage(ServiceOutage);
+			crPage.selectResourceReq(ResourceRequirement);
+			crPage.selectImplStrategy(ImplementationStrategy);
+			crPage.selectRelType(ReleaseType);
+			crPage.enterAdhocApprover(AddhocApprover);
+			crPage.clickSave();
+			Assert.assertTrue(crPage.approveCR(), "failed to approve CR");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname, BROWSER);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}	
+	}
+	
+
+
+	@Test(enabled=true, priority=5, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void ServiceNow_Change_TC2(String ConfItem,String Priority, String Approval, String CRState, String Category,
+									String AssignGroup, String Peoject, String ProjectTask,	String ShortDesciption,
+									String Justification,String BusinessImpact, String ServiceOutage,String ResourceRequirement,
+									String ImplementationStrategy,String ReleaseType, String AddhocApprover,
+									String depName, String depConfigItem, String depVersion, String depype,
+									String depOrder, String deppath, String depNotes, String depTime) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{		
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickCreateNewChange();
+			crPage = PageFactory.initElements(driver,ChangeRequestPage.class);
+			crPage.switchFrame();
+			crPage.enterConfItem(ConfItem);
+			crPage.selectPriority(Priority);
+			crPage.selectApproval(Approval);
+			crPage.selectCRState(CRState);
+			crPage.selectCatagory(Category);
+			crPage.enterAssignGroup(AssignGroup);
+			crPage.enterProject(Peoject);
+			crPage.enterProjectTask(ProjectTask);
+			crPage.enterShortDescription(ShortDesciption);
+			crPage.enterJustification(Justification);
+			crPage.selectBusiImpact(BusinessImpact);
+			crPage.selectServiceOutage(ServiceOutage);
+			crPage.selectResourceReq(ResourceRequirement);
+			crPage.selectImplStrategy(ImplementationStrategy);
+			crPage.selectRelType(ReleaseType);
+			crPage.enterAdhocApprover(AddhocApprover);
+			crPage.clickSave();
+			Assert.assertTrue(crPage.approveCR(),"failed to approve CR");
+	        crPage.moveToColHeader();
+	        crPage.clickCreateDeployment();
+	        crPage.clickNewDeployObjects();
+	        crPage.enterDepName(depName);
+	        crPage.enterConfigurationItem(depConfigItem);
+	        crPage.enterVersion(depVersion);
+	        crPage.enterType(depype);
+	        crPage.enterOrder(depOrder);
+	        crPage.enterPath(deppath);
+	        crPage.enterNotes(depNotes);
+	        Assert.assertTrue(crPage.verifyDeployMethod(), "Deployment method failed to generate automated data");
+	        Assert.assertTrue(crPage.verifyDeployGroup(), "Deployment group failed to generate automated data");
+	        crPage.enterDeploymentTime(depTime);
+	        Assert.assertFalse(crPage.verifyApplyInSand(), "Apply in SAND: false ");
+	        crPage.submitDeployForm();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname, BROWSER);
+			if(!status) {
+				throw new Exception(err_msg);
+			}
+		}
+	}
+}

@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >  
+<suite name="WWT Test Suite" parallel="tests" thread-count="2">  
+  <test name="WWT SCM FacetSeraching" >  
+    <classes>  
+      	<class name="com.wwt.scm.TestNG_FacetSearching" /> 
+    </classes>  
+  </test>  
+  <test name="WWT LinesDisplay" >  
+    <classes>  
+      	<class name="com.wwt.scm.TestNG_LineDetailDisplay" /> 
+    </classes>  
+  </test>
+</suite> 

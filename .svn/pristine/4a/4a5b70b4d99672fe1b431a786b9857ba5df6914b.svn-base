@@ -1,0 +1,139 @@
+/*****************************************************
+ * Purpose: Facet Sales Channel Page Object
+ * Created by: Jitendra/Srinivas
+ * Created on: Aug-23-2013
+ * Last Modified on: 10-Sep-2013
+ *****************************************************/
+package com.wwt.scm;
+
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+
+public class InstallSiteCustomerFacet {
+	
+		protected final WebDriver driver;
+		
+		@FindBy(id="st_site_name")
+		private WebElement installSiteCustomerIcon;
+		
+		@FindBy(css="div[class='container-fluid'] div[class='input-append'] input[placeholder='Filter Install Site Customer']")
+		private WebElement installSiteCustinputbox;
+		
+		@FindBy(css="div[id='st_site_name-data'] i[class*='icon-remove']")
+		private WebElement installfilterdropdown;
+
+		@FindBy(css="div#st_site_name-data.facet-popover div.row-fluid div.span12 div.span12 div.span2 button#remove-selected-facets.btn")
+		private  WebElement removeinsCustfacet;
+		
+		//@FindBy(css="div#st_site_name-data.facet-popover div.row-fluid div.span12 div#main-facet-display.span12 ul#facet-list-item.nav li.ng-scope a.span12")
+		@FindBy(css="div#st_site_name-data.facet-popover div.row-fluid div.span12 div.facet-data-container div.search-facet-tab div.span12.facet-search-list-align ul#facet-return-list-item li a.span12.clearfix")
+		private List<WebElement> installsiteCustFacetList;
+		
+		@FindBy(css="div#st_site_name-data.facet-popover div.row-fluid div.span12 div.facet-data-container div.search-facet-tab div.span12 ul#facet-return-list-item li a")
+		private List<WebElement> siteFacetSearchNamesList;
+		
+		String installsiteSearchString=null;
+
+		public InstallSiteCustomerFacet(WebDriver driver) {
+			this.driver = driver;
+		}
+	
+		//Clicking on Install Site Customer Icon
+		public void clickInstallSiteCustomerIcon() throws InterruptedException{
+			Thread.sleep(5000);
+			installSiteCustomerIcon.click();
+			Thread.sleep(2000);
+		}
+		//2. Entering the Install Site Customer Customer name to Filter in the Install Site Customer Filter Box.
+		public void enterinstallsiteCustName(String installsiteName) throws InterruptedException{
+			installsiteSearchString = installsiteName;
+			installSiteCustinputbox.click();
+			installSiteCustinputbox.sendKeys(installsiteName);
+			Thread.sleep(3000);			
+		}
+		
+	    //Close the Install Site Customer Filter List
+		public void closeInstallSiteCustFacet() throws InterruptedException{
+	    	installfilterdropdown.click(); 
+	    	Thread.sleep(2000);
+		}  
+		// remove install site customer from facet
+	    public void removeInsCustfromFacet() throws InterruptedException{
+	    	removeinsCustfacet.click();
+		    Thread.sleep(2000);	    		
+	    }		
+		// Verify Search items displayed in facet has Customer name
+	    public boolean verifyInstallsiteFacetSearchResult(){
+	    	if (installsiteCustFacetList.size()==0) return false;
+	    	for(int i=0;i<installsiteCustFacetList.size();i++){
+	    		if ( !installsiteCustFacetList.get(i).getAttribute("title").toLowerCase().startsWith(installsiteSearchString.toLowerCase().trim())){
+	    			return false;
+	    		}
+	    	}
+	    	return true;
+	    } 
+	    
+	    // To get total count from the items displayed in facet search including multiple rows
+	    public int getRecordcountfromInstallSiteFacetSearch() {
+	    	int reccount = 0;
+	    	if (installsiteCustFacetList.size()==0) return 0;
+		    for(int i=0; i<installsiteCustFacetList.size();i++){
+		    	int mycount = CommonUtilLibrary.readcountfromfacetline(installsiteCustFacetList.get(i).getText());
+		    	reccount = reccount+mycount ;
+		    }
+		   	return reccount;   	
+	    }
+	    
+	    // To add all sales channels displayed in facet search to Main search option
+	    public boolean addInstallSiteCusttoSearch(){
+	    	try{	
+	    		int instalSitelistsize = installsiteCustFacetList.size();
+	    		if (instalSitelistsize==0) return false;
+		    	while(instalSitelistsize > 0){
+		    		installsiteCustFacetList.get(0).click();
+		    		Thread.sleep(1000);
+		    		if (instalSitelistsize > 1){
+		    			instalSitelistsize = installsiteCustFacetList.size();    				
+		    		} else {
+		    			break;
+		    		}
+		    	}
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    		return false;
+	    	}
+	    	return true;
+	    }     
+	    
+	    //Jitendra - To Get All the names 
+	    public String getAllSiteNamesList(){
+	    	//List <String> siteNamesListValues  = new ArrayList<String>();
+	    	String s = ""; int counter = 0;
+	    	int totalSiteFacetNameSize = siteFacetSearchNamesList.size();
+	    	for(int i = 0; i<totalSiteFacetNameSize; i++){
+	    		counter++;
+	    		s = s+siteFacetSearchNamesList.get(i).getAttribute("title");
+	    		if(counter<totalSiteFacetNameSize){
+	    			s=s+", ";
+	    		}
+	    		
+	    	}
+	    	return s;
+	    }
+ }
+    
+
+   
+    
+    
+   
+   
+   
+
+
+   
+   

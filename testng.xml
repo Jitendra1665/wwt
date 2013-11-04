@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" > 
+<suite name="WWT SCM Test Suite">   <!--  parallel="tests" thread-count="2" -->
+<!--   <test name="WWT SCM FacetSeraching" >  
+    <classes>  
+      	<class name="com.wwt.scm.TestNG_FacetSearching" /> 
+    </classes>     
+  </test>  
+  <test name="WWT SCM LineDetailDisplay" >  
+    <classes>  
+      	<class name="com.wwt.scm.TestNG_LineDetailDisplay" /> 
+    </classes>     
+  </test>  
+  <test name="WWT SCM SearchFilterDriver" >  
+    <classes>  
+      	<class name="com.wwt.scm.TestNG_SearchFilterDriver" /> 
+    </classes>     
+  </test>   -->
+  <test name="WWT SCM ExtUserSearchFilterDriver" >  
+    <classes>  
+      	<class name="com.wwt.scm.TestNG_ExtUserSearchFilterDriver" /> 
+    </classes>     
+  </test>    
+</suite> 

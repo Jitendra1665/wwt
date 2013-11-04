@@ -1,0 +1,249 @@
+/*****************************************************
+ * Purpose: Date Facet Search Page Object
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: Aug-23-2013, Aug-26-2013
+ *****************************************************/
+package com.wwt.scm;
+
+
+import java.text.ParseException;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
+
+public class DateSelectionFacet {
+	
+		protected final WebDriver driver;
+		
+		@FindBy(css="i[id='calendar-search-icon']")
+		private WebElement dateSearchIcon;
+		
+		//@FindBy(css="div[id='date-search-container'] div[class='add-on date-search-header ng-binding']")
+		//@FindBy(css="div#dateLineStatus.modal div.modal-body div.pull-left div.container-fluid div.control-group div.row-fluid input.input-medium")
+		@FindBy(css="div#dateLineStatus.modal div.modal-body div.pull-left div.container-fluid div.control-group")
+		private List<WebElement> filterDateTypes;
+		
+		//@FindBy(css="i[id=date-search-close][class*='icon-remove']")
+		@FindBy(css="div#dateLineStatus.modal div.modal-header button.close")
+		private WebElement closedatetypeFace;
+
+		WebElement verifyMonthYear = null;
+		
+	    public DateSelectionFacet(WebDriver driver) {
+		       this.driver = driver;
+		}
+    
+	    //1. click on Date Selection Facet
+	    public void clickDateSelectionFacet() throws InterruptedException{
+	    	Thread.sleep(3000);
+	    	dateSearchIcon.click();
+	    }
+	    
+	       
+	    //2. Clicking on the Date Calendar Icon.
+	    public int getDateTypeSize() throws InterruptedException{
+	    	return filterDateTypes.size();		
+		}	   
+    
+	    //Jitendra - verify displayed date Types List in matching with the 
+	    public boolean verifyDateTypeList(String userDateTypeList) throws InterruptedException{
+	    	boolean dateTypeFlag = false;
+	    	for(int i = 0; i<filterDateTypes.size(); i++){
+	    		if(userDateTypeList.toLowerCase().trim().contains(filterDateTypes.get(i).getText().toLowerCase().trim())){
+	    			dateTypeFlag = true;
+	    			Thread.sleep(5000);
+	    			break;    	
+	    		}
+	    	}
+			return dateTypeFlag;
+		}
+	    
+	    
+	    //Jitendra - Latest Update
+	    public void clickOnRequiredDateType(String dateType, String fromTo) throws InterruptedException{
+	    	int dateTypeIndex = 0; 	
+			WebElement endDate_StartDateInbox = null;
+			for(int i = 0; i<filterDateTypes.size(); i++){
+				  //if(filterDateTypes.get(i).getText().trim().equalsIgnoreCase(dateType)){
+				if(filterDateTypes.get(i).getText().toLowerCase().trim().contains(dateType.toLowerCase().trim())){	  
+				dateTypeIndex = i+1;
+					  //dateTypeIndex = i+2;
+					  break;
+				  }
+			}
+			int calendarButtonType = 1;
+			if(!fromTo.equalsIgnoreCase("from")){
+				  calendarButtonType = 2;
+				  //System.out.println(fromTo);
+			}
+			
+			Thread.sleep(3000);//System.out.println(fromTo);
+			//String s = ".//*[@id='date-search-container']/div["+dateTypeIndex+"]/div[2]/button["+calendarButtonType+"]";
+			//String s = "//div[@id='date-search-container']/div["+dateTypeIndex+"]//input["+calendarButtonType+"]";
+			//String s = "//div[@id='date-search-container']/div/div["+dateTypeIndex+"]/div/input["+calendarButtonType+"]"; // Updated - By Srinivas
+			//*[@id='dateLineStatus']/div[2]/div[1]/div/div[2]/div/input[1]
+			String s = "//div[@id='dateLineStatus']/div[2]/div[1]/div/div["+dateTypeIndex+"]/div/input["+calendarButtonType+"]";
+			//System.out.println(s);
+			Thread.sleep(1000);
+			endDate_StartDateInbox = driver.findElement(By.xpath(s));		   				
+			Actions mouseClick = new Actions(driver);
+			mouseClick.moveToElement(endDate_StartDateInbox).click().perform();
+		}
+	  
+
+		//4. Verifying if the current displaying year is the one which we are looking for.
+		public boolean verifyYear(String year, int calenderToClick) throws InterruptedException{
+			boolean yearVerifycation = false;
+			//String syear = ".//*[@id='ng-app']/body/div["+calenderToClick+"]/div[1]/table/thead/tr[1]/th[2]";
+			String syear = "//*[@id='ng-app']/body/div["+calenderToClick+"]/div[1]/table/thead/tr[1]/th[2]";
+							Thread.sleep(2000);
+				verifyMonthYear = driver.findElement(By.xpath(syear));
+				String YR = verifyMonthYear.getText();
+				if(YR==year){
+						yearVerifycation = true;
+				}
+			return yearVerifycation;
+		}
+	
+		//5. If the displaying year is not the current year then it will pick the required year.
+		public int yearPicker(String yr, int from_to) throws InterruptedException{
+				Integer YEARtoSELECT = new Integer(yr);
+				//String sCurrentYear = ".//*[@id='ng-app']/body/div["+from_to+"]/div[2]/table/thead/tr/th[2]";
+				String sCurrentYear = "//*[@id='ng-app']/body/div["+from_to+"]/div[2]/table/thead/tr/th[2]";
+				WebElement verifyCurrentYear = driver.findElement(By.xpath(sCurrentYear));
+				String presentDisplayYear = verifyCurrentYear.getText();
+				Integer displayYear = new Integer(presentDisplayYear);
+				int yearDiff = 0;
+				if(YEARtoSELECT < displayYear){
+					yearDiff = displayYear - YEARtoSELECT;
+				}else if(YEARtoSELECT>displayYear){
+					yearDiff = YEARtoSELECT-displayYear;
+					
+				}
+				return yearDiff;			
+		}
+		public int arrowToClick(String CurrentYear, int From_to){
+			Integer YEARtoSELECT = new Integer(CurrentYear);
+			//String sCurrentYear = ".//*[@id='ng-app']/body/div["+From_to+"]/div[2]/table/thead/tr/th[2]";
+			String sCurrentYear = "//*[@id='ng-app']/body/div["+From_to+"]/div[2]/table/thead/tr/th[2]";
+			WebElement verifyCurrentYear = driver.findElement(By.xpath(sCurrentYear));
+			String presentDisplayYear = verifyCurrentYear.getText();
+			Integer displayYear = new Integer(presentDisplayYear);
+			int Arrow_to_Click = 1;
+			if(YEARtoSELECT > displayYear){
+				Arrow_to_Click = 3;
+			}
+			return Arrow_to_Click;
+		}
+		
+		//6. If the year is current year, then we need to verify the month is current month or not. 
+		public boolean verifyMonth(String month,int fromTo) throws InterruptedException{
+			boolean monthBoolean = true;
+			//String smonth = ".//*[@id='ng-app']/body/div["+fromTo+"]/div[1]/table/thead/tr[1]/th[2]";
+			String smonth = "//*[@id='ng-app']/body/div["+fromTo+"]/div[1]/table/thead/tr[1]/th[2]";
+			Thread.sleep(1000);
+			verifyMonthYear = driver.findElement(By.xpath(smonth));
+			String monthYear = verifyMonthYear.getText();
+			if(!(monthYear.contains(month))){
+					monthBoolean = false;
+			}
+			return monthBoolean;
+		}
+		//7. If the month which we are selecting is not the current month then this method will pick the required month.
+		void monthPicker(String monthToSelect, int divFrom) throws InterruptedException 
+		{
+				int l=0;
+				l=new Integer(monthToSelect);
+				String monthPickTable = "//*[@id='ng-app']/body/div[" +divFrom+"]/div[2]/table/tbody/tr/td/span["+l+"]";
+				Thread.sleep(1000);
+				WebElement monthSelect = driver.findElement(By.xpath(monthPickTable));		   				
+				Thread.sleep(1000);
+				Actions mouseClick = new Actions(driver);
+				Thread.sleep(1000);
+				mouseClick.click(monthSelect).perform();
+		}	
+
+	
+		//8. To get the required Month from the Months display menu
+		public void monthHeaderClick() throws InterruptedException{
+			Actions clickForMonthSelection = new Actions(driver);
+			Thread.sleep(1000);
+			clickForMonthSelection.click(verifyMonthYear).perform();
+		}
+	
+		//9. To get the required Date from the Calendar Display menu 
+		public void yearHeaderClick(int arrowClick, int fromTo) throws InterruptedException{
+			//String arrow = ".//*[@id='ng-app']/body/div["+fromTo+"]/div[2]/table/thead/tr/th["+arrowClick+"]/i";
+			String arrow = "//*[@id='ng-app']/body/div["+fromTo+"]/div[2]/table/thead/tr/th["+arrowClick+"]/i";
+			WebElement getYear = driver.findElement(By.xpath(arrow));
+			Actions clickForYear = new Actions(driver);
+			Thread.sleep(1000);
+			clickForYear.click(getYear).perform();
+		}
+		//10. Selecting the date.
+		public void dateSelector(String requiredDate, int fromOrTo) throws InterruptedException{
+				for(int row = 1; row<=6; row++){
+					for(int col = 1; col<=7; col++){
+						int c = 0;
+						if(c==0){
+							//String date1 = ".//*[@id='ng-app']/body/div["+fromOrTo+"]/div[1]/table/tbody/tr["+row +"]/td["+col+"]";
+							String date1 = "//*[@id='ng-app']/body/div["+fromOrTo+"]/div[1]/table/tbody/tr["+row +"]/td["+col+"]";
+							WebElement dateElement = driver.findElement(By.xpath(date1));
+							String dateClassAttribute = dateElement.getAttribute("class");
+							if(!(dateClassAttribute.equalsIgnoreCase("day old") || dateClassAttribute.equalsIgnoreCase("day new"))){
+									String expectedDate = dateElement.getText();
+									if(expectedDate.equals(requiredDate)){
+										dateElement.click();
+										col=8;row=7;
+										break;
+									}
+							}
+						}
+					}
+				}
+			}
+	
+		//10. Closing the Date menu    //6. Close the Customer Filter List
+	    public void closeFilterDateDropDown() throws InterruptedException{
+	    	closedatetypeFace.click(); 
+	    	Thread.sleep(2000);
+		    }
+    
+	    public void Dateset(String dateType, String fromTo,  String ddate) throws InterruptedException, ParseException{
+	     		
+	    		clickOnRequiredDateType(dateType, fromTo);
+	     		String darray[] = ddate.split("/");
+	     		String dYear = darray[0];
+	     		String dMonth = darray[1];
+	     		String dDay = darray[2];
+		 		int datetoclick = 2; //dateType(fromTo);
+		 		boolean booleanYearto = verifyYear(dYear, datetoclick);
+		 		if(!booleanYearto ){
+			 		monthHeaderClick();
+					int find_yearDiff_if_greater_less_than_currentYear = yearPicker(dYear, datetoclick);
+					int incre_decre_arrowType_toClick =  arrowToClick(dYear, datetoclick);
+					//Will Click on Side arrow (increment or decrement buttons) based on our year type
+					for(int i = 1; i<=find_yearDiff_if_greater_less_than_currentYear; i++){
+						yearHeaderClick(incre_decre_arrowType_toClick, datetoclick);
+					}
+					monthPicker(dMonth, datetoclick); 
+			
+		 		} else{
+		 			boolean boolanMonth = verifyMonth(dMonth, datetoclick);  
+		 			if(!boolanMonth){
+		 				monthHeaderClick();
+		 				monthPicker(dMonth, datetoclick);
+		 			}
+		 		}
+		 		dateSelector(dDay, datetoclick);  
+		 		Thread.sleep(3000);
+		 		//Clicking on date label to ensure other opened calendars are closed
+		 	//	driver.findElement(By.xpath("//*[@id='date-search-container']/div[1]/div[1]")).click();
+	    }
+    
+}

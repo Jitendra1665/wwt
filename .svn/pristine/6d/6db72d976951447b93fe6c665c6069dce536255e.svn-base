@@ -1,0 +1,142 @@
+/*****************************************************
+ * Purpose: Address Facet Page Object
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: Sep-6-2013
+ *****************************************************/
+package com.wwt.scm;
+
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+
+public class FilterAddress {
+	
+		protected final WebDriver driver;
+		
+		@FindBy(css="a[id='add_address_concat']")
+		private WebElement addressIcon;
+		
+		@FindBy(css="div[class='container-fluid'] div[class='input-append'] input[placeholder='Filter Address']")
+		private WebElement addressfacetserachbox;
+		
+		@FindBy(css="div[id='add_address_concat-data'] i[class*='icon-remove']")
+		private WebElement addressFacetdropdown;	
+
+		@FindBy(css="div#add_address_concat-data.facet-popover div.row-fluid div.span12 div.span12 div.span2 button#remove-selected-facets.btn")
+		private WebElement removeadressfromFacet;
+		
+		@FindBy(css="div#add_address_concat-data.facet-popover div.row-fluid div.span12 div#main-facet-display.span12 ul#facet-list-item.nav li.ng-scope a.span12")
+		private List<WebElement> addressFacetSearchList;
+		
+		String addressSearchString=null;
+	
+	    public FilterAddress(WebDriver driver) {
+	    	
+	        this.driver = driver;
+	    }
+	    //Clicking on Address Icon
+	    public void addressIconClick(){
+	    	try{
+	    	 	addressIcon.click();
+	    	 	Thread.sleep(1000);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    }
+	    //Entering the Address Customer name to Filter in the Address Filter Box.
+	    public void enterAddress(String addressString) {
+	    	try{
+	    		addressSearchString = addressString;
+	    		addressfacetserachbox.sendKeys(addressString);
+	    		Thread.sleep(4000);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}	    	
+	    }
+	    //Close the Address Filter List
+	    public void closeAddressFilterDropDown(){ 
+	    	try{	    	
+	    		addressFacetdropdown.click(); 
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    }
+	    // Remove address from search facet
+	    public void removeaddressfromSearchFacet(){
+	    	try{	    	
+	    	removeadressfromFacet.click();
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}	    	
+	    }
+	   
+		// Verify Search items displayed in facet has Customer name
+	    public boolean verifyaddressFacetSearchResult(){
+	    	try{
+		    	for(int i=0;i<addressFacetSearchList.size();i++){
+		    		if ( !addressFacetSearchList.get(i).getAttribute("title").toLowerCase().contains(addressSearchString.toLowerCase())){
+		    			return false;
+		    		}
+		    	}
+	    	} catch(Exception e){
+	    		e.printStackTrace();
+	    		return false;
+	    	}
+	    	return true;
+	    } 
+	    // Method to get record count from search facet Customers display for a single line
+	    public int getcountfromAddressFacet(String displayedChannel){
+	    	String recordnum=""; 
+	    	try{
+		    	 Pattern p =  Pattern.compile("\\((.*?)\\)",Pattern.DOTALL);
+			   	 Matcher matcher = p.matcher(displayedChannel.trim());
+			   	 while(matcher.find()){
+			   		recordnum = matcher.group(1);
+			   		recordnum = recordnum.replace(",","");  
+			   	 }
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+		   	 return (new Integer(recordnum));   
+	    }
+	    // To get total count from the items displayed in facet search including multiple rows
+	    public int getRecordcountfromAddressFacetSearch() {
+	    	int reccount = 0;
+	    	try{
+		    	for(int i=0; i<addressFacetSearchList.size();i++){
+		    		int mycount = getcountfromAddressFacet(addressFacetSearchList.get(i).getText());
+		    		reccount = reccount+mycount ;
+		    	}
+	    	}catch (Exception e){
+	    		e.printStackTrace();
+	    	}
+		   	return reccount;   	
+	    }
+	    // To add all sales channels displayed in facet search to Main search option
+	    public boolean addAddresstoSearch(){
+	    	try{	
+	    		 int saleschannellistsize = addressFacetSearchList.size();
+		    	while(saleschannellistsize > 0){
+		    		System.out.println(addressFacetSearchList.get(0).getText());
+		    		addressFacetSearchList.get(0).click();
+		    		Thread.sleep(1000);
+		    		if (saleschannellistsize > 1){
+		    			saleschannellistsize = addressFacetSearchList.size();    				
+		    		} else {
+		    			break;
+		    		}
+		    	}
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    		return false;
+	    	}
+	    	return true;
+	    }   	      
+ }

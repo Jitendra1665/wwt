@@ -1,0 +1,90 @@
+/*****************************************************
+ * Purpose: Page Object File file for line status
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: Aug-26-2013
+ *****************************************************/
+
+package com.wwt.scm;
+
+import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class FilterLineStatus {
+		protected final WebDriver driver;
+
+		@FindBy(id="lineSatus")
+		private WebElement lineStatusIcon;
+
+		@FindBy(css="div[id='lineSatus-data'] div[class='lead']")
+		private List<WebElement> statusLineTypes;
+	
+		@FindBy(css="i[id='line-status-close'][class*='icon-remove']")
+		private WebElement closeLineSFacet;
+		
+		int LineStatusTypeNumber = 0;
+		
+		public FilterLineStatus(WebDriver driver) {
+	        this.driver = driver;
+	    }
+	
+	
+		//1. Clicking on Line Status Icon
+		public void lineStatusIconClick() throws InterruptedException{
+	    		Thread.sleep(2000);
+				lineStatusIcon.click();
+	    }
+	    
+		public void closeLinsestatusFacet(){
+			closeLineSFacet.click();
+		}
+		//2. Verifying if the Required List Type is available or not
+		public boolean verifyingGivenlineStatus(String statusLineTypeName){
+			boolean statusTypeAvailability = false;
+			List <WebElement> lineStatusTypes_List = statusLineTypes;
+			int lineStatusTypesCount = lineStatusTypes_List.size();
+			int j=1;
+			for(int i=0;i<lineStatusTypesCount; i++){
+				String listName = lineStatusTypes_List.get(i).getText();
+				if(listName.contains(statusLineTypeName)){
+				  statusTypeAvailability = true;
+				  LineStatusTypeNumber=j;
+				  break;
+				}
+				j++;
+			}
+			return statusTypeAvailability;
+		}
+	 
+		 //3. Selecting the required Check box from the list.
+		 public void selctCheckBox(int filteredListTypeNumber, String checkBoxToSelect){
+			 System.out.println("Filt LT number " + filteredListTypeNumber);
+			int checkBoxNumber = 0;
+			String xpathCheckBoxList = ".//*[@id='lineSatus-data']/div/div/div["+
+						filteredListTypeNumber+"]/label[@class='checkbox']/input";
+			 
+			 List <WebElement> checkBoxesList = driver.findElements(By.xpath(xpathCheckBoxList));
+			 String checkboxNameToSelect = null;
+			 int checkBoxesListSize = checkBoxesList.size();
+			 int j=1;
+			 for(int i=0;i<checkBoxesListSize;i++){
+				 checkboxNameToSelect = checkBoxesList.get(i).getAttribute("ng-model");
+				 if(checkboxNameToSelect.contains(checkBoxToSelect)){
+				 	checkBoxNumber=j;			 		
+				 }
+				 j++;
+			 }
+			 if(checkBoxesListSize>0){
+				 String xpathCheckBox = ".//*[@id='lineSatus-data']/div/div/div["+
+							filteredListTypeNumber+"]/label["+checkBoxNumber+"]/input";
+				driver.findElement(By.xpath(xpathCheckBox)).click(); 	 
+			 		
+			 }else{
+				 System.out.println("There is no Check Box Available");
+			 }
+		 } 
+	 
+}

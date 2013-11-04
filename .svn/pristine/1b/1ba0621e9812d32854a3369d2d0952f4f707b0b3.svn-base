@@ -1,0 +1,104 @@
+/*****************************************************
+ * Purpose: Address Facet Page Object
+ * Created by:Jitendra/ Srinivas
+ * Created on: 
+ * Modified on: Sep-6-2013
+ *****************************************************/
+package com.wwt.scm;
+
+
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class AddressFacet {
+	
+		protected final WebDriver driver;
+		
+		@FindBy(css="a[id='add_address_concat']")
+		private WebElement addressIcon;
+		
+		@FindBy(css="div[class='container-fluid'] div[class='input-append'] input[placeholder='Filter Address']")
+		private WebElement addressfacetserachbox;
+		
+		@FindBy(css="div[id='add_address_concat-data'] i[class*='icon-remove']")
+		private WebElement addressFacetdropdown;	
+
+		@FindBy(css="div#add_address_concat-data.facet-popover div.row-fluid div.span12 div.span12 div.span2 button#remove-selected-facets.btn")
+		private WebElement removeadressfromFacet;
+		
+		//@FindBy(css="div#add_address_concat-data.facet-popover div.row-fluid div.span12 div#main-facet-display.span12 ul#facet-list-item.nav li.ng-scope a.span12")
+		@FindBy(css="div#add_address_concat-data.facet-popover div.row-fluid div.span12 div.facet-data-container div.search-facet-tab div.span12 ul#facet-return-list-item.nav li.ng-scope a.span12")
+		private List<WebElement> addressFacetSearchList;
+		
+		String addressSearchString=null;
+	
+	    public AddressFacet(WebDriver driver) {
+	    	
+	        this.driver = driver;
+	    }
+	    //Clicking on Address Icon
+	    public void clickAddressIcon() throws InterruptedException{
+	    	 	addressIcon.click();
+	    	 	Thread.sleep(1000);
+	    }
+	    //Entering the Address Customer name to Filter in the Address Filter Box.
+	    public void enterAddress(String addressString) throws InterruptedException {
+	    		addressSearchString = addressString;
+	    		addressfacetserachbox.click();
+	    		addressfacetserachbox.sendKeys(addressString);
+	    		Thread.sleep(5000);
+	    }
+	    //Close the Address Filter List
+	    public void closeAddressFacet(){ 
+	    		addressFacetdropdown.click(); 
+	    }
+	    // Remove address from search facet
+	    public void removeAddressfromSearchFacet(){
+	    	removeadressfromFacet.click();
+	    }
+	   
+		// Verify Search items displayed in facet has Customer name
+	    public boolean verifyAddressFacetSearchResult(){
+	    	if (addressFacetSearchList.size()==0 ) return false;
+		    	for(int i=0;i<addressFacetSearchList.size();i++){
+		    		if ( !addressFacetSearchList.get(i).getAttribute("title").toLowerCase().contains(addressSearchString.toLowerCase().trim())){
+		    			return false;
+		    		}
+		    	}
+	    	return true;
+	    } 
+	    // To get total count from the items displayed in facet search including multiple rows
+	    public int getRecordcountfromAddressFacetSearch() {
+	    	int reccount = 0;
+	    	if (addressFacetSearchList.size()==0) return 0;
+		    for(int i=0; i<addressFacetSearchList.size();i++){
+		    	int mycount = CommonUtilLibrary.readcountfromfacetline(addressFacetSearchList.get(i).getText());
+		    	reccount = reccount+mycount ;
+		    }
+		   	return reccount;   	
+	    }
+	    // To add all sales channels displayed in facet search to Main search option
+	    public boolean addAddresstoSearch(){
+	    	try{	
+	    		 int saleschannellistsize = addressFacetSearchList.size();
+	    		 if (saleschannellistsize==0) return false;
+		    	while(saleschannellistsize > 0){
+		    		addressFacetSearchList.get(0).click();
+		    		Thread.sleep(1000);
+		    		if (saleschannellistsize > 1){
+		    			saleschannellistsize = addressFacetSearchList.size();    				
+		    		} else {
+		    			break;
+		    		}
+		    	}
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    		return false;
+	    	}
+	    	return true;
+	    }   	 
+	    
+ }

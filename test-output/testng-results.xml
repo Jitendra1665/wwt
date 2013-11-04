@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="113901" started-at="2013-10-29T16:48:24Z" finished-at="2013-10-29T16:50:18Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="113901" started-at="2013-10-29T16:48:24Z" finished-at="2013-10-29T16:50:18Z">
+      <class name="com.wwt.scm.TestNG_SearchFilterDriver">
+        <test-method status="PASS" signature="launchAndLogin()[pri:0, instance:com.wwt.scm.TestNG_SearchFilterDriver@299bc338]" name="launchAndLogin" is-config="true" duration-ms="58996" started-at="2013-10-29T22:18:25Z" finished-at="2013-10-29T22:19:24Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- launchAndLogin -->
+        <test-method status="PASS" signature="SearchAndFilter_2_0(java.lang.String, java.lang.String)[pri:0, instance:com.wwt.scm.TestNG_SearchFilterDriver@299bc338]" name="SearchAndFilter_2_0" duration-ms="51017" started-at="2013-10-29T22:19:24Z" data-provider="SCMGETCSVTestData" finished-at="2013-10-29T22:20:15Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[All]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[1001416]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- SearchAndFilter_2_0 -->
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:com.wwt.scm.TestNG_SearchFilterDriver@299bc338]" name="afterTest" is-config="true" duration-ms="1" started-at="2013-10-29T22:20:18Z" finished-at="2013-10-29T22:20:18Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterTest -->
+      </class> <!-- com.wwt.scm.TestNG_SearchFilterDriver -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

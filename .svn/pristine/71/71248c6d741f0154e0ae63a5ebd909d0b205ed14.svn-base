@@ -1,0 +1,350 @@
+package com.wwt.scm;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+public class ColumnHideOrFreeze {
+	
+	protected final WebDriver driver;
+	
+	//@FindBy(xpath="//*[@id='result-navigation']/div[3]/div[1]/button[2]")
+	@FindBy(css="div#resultPager ul.inline li button[class*='btn btn-info btn-mini']")
+	private WebElement hideOrFreezeIcon;
+	
+	//@FindBy(css="div[id='result-navigation'] table[class='table table-striped table-bordered line-sorting-table'] tr[class='ng-scope'] td[class='ng-binding']")
+	@FindBy(css="div[id='colconfigTable'][class='row-fluid'] table tr[class='ng-scope'] td[class='ng-binding']")
+	private List <WebElement> allColumnHeadingsList;
+	
+	//@FindBy(css="div[id='table-control-buttons'] button[class*='btn pull-'] i[class='icon-remove unhide-icon']")
+	@FindBy(css="div[id='configModal'][class='modal'] div[class='row-fluid'] div[class*='well'] button[id='unHideAll'][class*='btn']")
+	private WebElement showAllButtonIcon;
+	
+	//@FindBy(css="div[id='table-control-buttons'] button[class*='btn pull-'] i[class='icon-pushpin unfreeze-icon']")
+	@FindBy(css="div[id='configModal'] div[class='row-fluid'] div[class*='well'] button[id='unfreezeAll'][class*='btn']")
+	private WebElement unFreezeAllButtonIcon;
+	
+	//Apply Button
+	@FindBy(css="div[id='configModal'] div[class='row-fluid'] div[class*='well'] button[id='apply'][class*='btn']")
+	private WebElement applyBtn;
+	
+	//@FindBy(css="div[id='result-navigation'] i[class*='icon-remove user-pref-close-icon']")
+	@FindBy(css="div[id='configModal'] i.icon-remove")
+	private WebElement closeHideAndFreezeDropDownList;
+		
+	//@FindBy(css="div[id='lines-header-container-frozen'] div[id='lines-header-frozen'] div[style=''] span[class='column-name']")
+	@FindBy(css="div#frozenLinesHeader div div")
+	private List <WebElement> frozenColumnHeaderList;
+
+	//trying to see all the check boxes if checked for unhide column.
+	@FindBy(css="div#colconfigTable.row-fluid table.table tbody tr.ng-scope td input[ng-model='column.isHidden']")
+	private List <WebElement> verifyUnHideChkBox;
+	
+	//trying to see all the check boxes if checked for frozen columns.
+	@FindBy(css="div#colconfigTable.row-fluid table.table tbody tr.ng-scope td input[ng-model='column.isFrozen'][checked*='check']")
+	private List <WebElement> verifyUnFreezeChkBox;
+	
+	@FindBy(css="button#unHideAll.btn")
+	private WebElement unHideAllButton;
+	
+	@FindBy(css="button#unfreezeAll.btn")
+	private WebElement unfreezeAllButton;
+
+	public ColumnHideOrFreeze(WebDriver driver) {
+        this.driver = driver;
+    }
+	
+	//1. Clicks on Config Icon
+	public void clickOnColumnHideOrFreezeIcon() throws InterruptedException{		 	
+			Thread.sleep(5000);
+		 	hideOrFreezeIcon.click();
+		 	Thread.sleep(5000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+	}
+	 
+	 //2. Returns all the Columns that are available to hide or to freeze
+	public List <String> getColumnsInHideIcon(){
+		allColumnHeadingsList.size();
+		List <String> columnHeaderNamesInHideList = new ArrayList <String> ();
+		for(int i = 0; i < allColumnHeadingsList.size(); i++ ){
+			columnHeaderNamesInHideList.add(allColumnHeadingsList.get(i).getText());
+		}
+		return columnHeaderNamesInHideList;
+	}
+	 
+	 //3. Returns the corresponding row number of the given column Header that needs to hide/verify/freeze 
+	public int getrowfreezehide(String columnHeaderName){
+		 boolean colname=false; 
+		 List <String> columnHeaderNamesList = getColumnsInHideIcon();
+		 int colRowNum = 0;
+		 for(int i=0; i<columnHeaderNamesList.size(); i++){
+			 	 if(columnHeaderNamesList.get(i).contains(columnHeaderName)){
+			 		colRowNum = i+2; //nthRow=i+2; //Adding 2 - 1 for item starting form 0 and 1 for ignoring the heading.
+			 		colname = true;
+			 		return colRowNum;
+				 }
+		 }
+		 if(!colname){
+			 System.out.println("There is no column as per your input : ");
+			 return 0;
+		 }
+		 return colRowNum;
+
+	}
+	 
+	//4. Hide the column Header
+	public void hideOrUnHide(String columnName) throws InterruptedException{
+		int nthRow = getrowfreezehide(columnName);
+		if ( nthRow > 0) {
+			
+			// ng-model="column.isFrozen"
+			 String hideChkBoxXpath = "//tr[" + nthRow + "]//input[@ng-model='column.isHidden']";
+			 WebElement	 hideCheckBox = driver.findElement(By.xpath(hideChkBoxXpath));
+			 
+			 hideCheckBox = driver.findElement(By.xpath(hideChkBoxXpath));
+			 hideCheckBox.click();
+			 Thread.sleep(5000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+				//return true;
+		}			
+	 }
+	
+	//5. Freeze the column Header	
+	public void freezeOrUnFreeze(String columnName) throws InterruptedException{
+	//List <String> columnHeaderNamesList = getColumnsInHideIcon();
+		int nthRow = getrowfreezehide(columnName);
+		if ( nthRow > 0) {
+			 String freezeChkBoxXPath = "//tr[" + nthRow + "]//input[@ng-model='column.isFrozen']";
+			 WebElement	 freezeCheckBox = driver.findElement(By.xpath(freezeChkBoxXPath));
+			 freezeCheckBox.click();
+			 Thread.sleep(5000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+		} 
+	}	
+	
+	/*  code changed as below 
+	
+	//6. verify whether column Header is hidden or not 
+	public boolean verifyHide(String columnName){
+		int nthRow = getrowfreezehide(columnName);
+		String verifyHideIcon = ".//*[@id='result-navigation']/div[3]/div[1]/div/div/table/tbody/tr[" + nthRow + "]/td[1]/button[2]";
+		WebElement hiddenButton = driver.findElement(By.xpath(verifyHideIcon));
+		if(hiddenButton.getAttribute("class").contains("btn-warning active")){
+			 return true;
+		}
+		return false;	
+	}   */
+	
+	
+	//6. verify whether given column Header is hidden or not 
+	public boolean verifyHide(String columnName){
+		boolean columnHideFlag=false;
+		for(int i  = 0; i<verifyUnHideChkBox.size(); i++)
+		{
+			if(verifyUnHideChkBox.get(i).getAttribute("checked").equals("checked")){
+				if(allColumnHeadingsList.get(i).equals(columnName)){
+					columnHideFlag = true;
+				}
+			}	
+			
+		}
+				
+		return columnHideFlag;	
+	}
+	
+	//7 find How Many column Header is hidden or not 
+	public int getAllHideColCount(){
+		int hideCounter=0;
+		for(int i = 0; i<verifyUnHideChkBox.size(); i++){
+			if(verifyUnHideChkBox.get(i).isSelected()){
+				hideCounter++;
+			}
+		}
+		return hideCounter++;
+	}
+		 
+	/*  Code changed as below
+	
+	//8. verifies whether column header is freeze or not.  
+	public boolean verifyFreeze(String columnName){
+		
+		int nthRow = getrowfreezehide(columnName);
+		String verifyFreezIcon = ".//*[@id='result-navigation']/div[3]/div[1]/div/div/table/tbody/tr[" + nthRow + "]/td[1]/button[1]";
+		WebElement freezButton = driver.findElement(By.xpath(verifyFreezIcon));
+		if(freezButton.getAttribute("class").contains("btn-info active")){
+			return true;
+		}
+		return false;	
+	}     */
+	
+	
+	//8. verify whether given column Header is hidden or not 
+		public boolean verifyFreeze(String columnName){
+			for(int i = 0; i<verifyUnFreezeChkBox.size(); i++){
+				if(verifyUnFreezeChkBox.get(i).isSelected()){
+					if(allColumnHeadingsList.get(i).equals(columnName)){
+						return true;
+					}
+				}
+			}
+			return false;	
+		}
+		
+	//9. find How Many column Headers are freezed or not 
+	public int getAllFreezeColCount(){
+		int hideCounter=0;
+		for(int i = 0; i<verifyUnFreezeChkBox.size(); i++){
+			if(verifyUnFreezeChkBox.get(i).isSelected()){
+				hideCounter++;
+			}
+		}
+		return hideCounter++;
+	}
+	
+	//10. verify whether column Header is hidden or not
+	public boolean verifyHideCheckBox(String columnName){
+		int nthRow = getrowfreezehide(columnName);
+		String verifyHideIcon = "//tr[" + nthRow + "]//input[@ng-model='column.isHidden']";
+		WebElement hideButton = driver.findElement(By.xpath(verifyHideIcon));
+		if(hideButton.isEnabled()){
+			return true;
+		}
+		return false;					 
+	}
+			 
+	//11. verifies whether column header is freeze or not. 
+	public boolean verifyFreezeCheckBox(String columnName){
+		int nthRow = getrowfreezehide(columnName);
+		String verifyFreezIcon = "//tr[" + nthRow + "]//input[@ng-model='column.isFrozen']";
+		WebElement freezButton = driver.findElement(By.xpath(verifyFreezIcon));
+		if(freezButton.isEnabled()){
+			return true;
+		}	
+		return false;	
+	}
+	
+	//12. UnFreez All Button Click
+	public void unFreezeAll() throws InterruptedException{
+		unFreezeAllButtonIcon.click();
+		Thread.sleep(2000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+	}
+		 
+	//13. Show All Button Click
+	public void showAll() throws InterruptedException{
+		 showAllButtonIcon.click();
+		 Thread.sleep(2000);	//To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method	  
+	}
+	
+	//14. Close the Customer Filter List
+	public void closeHideOrFreezDropDown() throws InterruptedException{
+		closeHideAndFreezeDropDownList.click(); 
+		Thread.sleep(5000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+	}
+			
+	//15 Click on Apply Button.
+	public void clickApply() throws InterruptedException{
+		applyBtn.click();
+		Thread.sleep(5000);
+	}
+	
+	//16. Validating the given columns are displayed as frozen in the table or not  - update by me
+	public boolean validatefrozenCols(String columnFreezed){
+		List <String> freezedColumns = new ArrayList<String>();
+		for(int i = 0; i<frozenColumnHeaderList.size(); i++){
+			freezedColumns.add(frozenColumnHeaderList.get(i).getText());
+		}		
+		boolean flag=true;
+		for(int i = 0; i<freezedColumns.size(); i++){
+			if(columnFreezed.contains(freezedColumns.get(i))){
+				flag=true;
+				//System.out.println("The given columns are freezed properly");
+			}else{
+				flag = false;
+				break;
+			}
+		}
+		return flag;
+	}
+	
+  	//17. Clicking on the given Freezed Column Heading
+  	public void sortFrozenCol(String s, String sortType) throws InterruptedException{
+  			for(int i =0 ;i<frozenColumnHeaderList.size(); i++){
+  			//System.out.println("freezedColumnHeaderList.get(i).getText() : " + frozenColumnHeaderList.get(i).getText() );
+  			if(frozenColumnHeaderList.get(i).getText().contains(s)){
+  				//System.out.println("freezedColumnHeaderList.get(i).getText() : " + frozenColumnHeaderList.get(i).getText() );
+  				if(sortType.contains("asc")){
+  					//System.out.println("Sorting asc Sorting asc ... Sorting asc ... ");
+  					frozenColumnHeaderList.get(i).click();
+  					Thread.sleep(5000);
+  					break;
+  				}
+  				else if(sortType.contains("desc")){
+  					//System.out.println("Sorting desc Sorting desc ... Sorting desc ... ");
+  					frozenColumnHeaderList.get(i).click();
+  					Thread.sleep(5000);  //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+  					frozenColumnHeaderList.get(i).click();
+  					Thread.sleep(5000); //To Do - Need to try to remove the Thread and implement the webDriverWait to identify the element apprears after the particular action is perfomered by this method
+  					break;
+  				}
+  			}
+  			
+  		}  		
+  	}
+
+	//18. clicking on required freeze Columns
+	public void clickonColumntofreeze(String columnToSort){
+		int counter = 0;
+		for(int i = 0; i<frozenColumnHeaderList.size(); i++){
+			if(frozenColumnHeaderList.get(i).getText().contains(columnToSort)){
+				frozenColumnHeaderList.get(i).click();
+				counter++;
+				break;
+			}
+			
+		}
+		if(counter==0){
+				System.out.println("There is not matching row displayed ... ");
+		}
+	}
+		
+	//19. Get the Frozen Column Header Count for the given Frozen Column Name.
+	public int frozenColumnNum(String s){
+		int frozenColNum=0;
+		for(int i = 0; i<frozenColumnHeaderList.size(); i++){
+			if(s.equalsIgnoreCase(frozenColumnHeaderList.get(i).getText().trim())){
+				frozenColNum=i+1;
+				return frozenColNum;
+			}
+		}		
+		return frozenColNum;
+	}
+	
+	
+	//20. To Get the values from the frozen column
+	public List <String> freezeColumnValues(String s){
+		List <String> frozenValues = new ArrayList<String>();
+		String xpath = "//div[@id='frozenLinesTable']/div["+frozenColumnNum(s)+"]/div";
+		List <WebElement> freezedColumnTableValues = driver.findElements(By.xpath(xpath));
+			
+		for(int i=0;i<freezedColumnTableValues.size(); i++){
+			if(! freezedColumnTableValues.get(i).getText().equals("")){
+				//frozenValues.add(freezedColumnTableValues.get(i).getText().replace(", "," "));
+				frozenValues.add(freezedColumnTableValues.get(i).getText());
+			}
+		}
+		return frozenValues;
+	}
+	
+	//unhides all the Columns
+	public void clickUnHideAll(){
+		unHideAllButton.click();
+	}
+	
+	//unhides all the Columns
+	public void clickUnfreezeAll(){
+		unfreezeAllButton.click();
+	}
+	
+}

@@ -1,0 +1,324 @@
+package com.wwt.scm;
+
+import java.io.FileInputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Options;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+public class TestNG_LineDetailDisplay {
+
+	FileInputStream ConfigFIS = null;
+	protected WebDriver driver = null;
+	Properties scriptproperties = null;
+	public Options options = null;
+	List <String> ReprotNameList = null;
+	String BROWSER = null;
+	SetDriverConfig setDriver = null;
+	LoginPage logIn = null;
+	HomePage homePage = null;
+	CustomerFacet custFacet = null;
+	SearchResults searchResultsPage = null;
+	ContractHeader contractHeaderPage = null;
+	SalesChannelFacet salesChannelFacet = null;
+	InstallSiteCustomerFacet siteCustomerFacet=null;
+	AddressFacet addressCustFacet=null;
+	DateSelectionFacet datesearchFacet=null;
+	LineStatusFacet linestatussearchFacet=null;
+	LineDetails LineDetailsPage=null;
+	ColumnHideOrFreeze freezehidefacet = null;
+	String nodeURL;
+	protected ThreadLocal<RemoteWebDriver> threadDriver = null; 
+	/*@BeforeMethod(enabled=true)
+	public void launchAndLogin() throws Exception {
+			ConfigFIS = new FileInputStream(".\\scm.properties");
+			scriptproperties = new Properties();
+			scriptproperties.load(ConfigFIS);
+			BROWSER = scriptproperties.getProperty("BROWSERTYPE");
+			setDriver = PageFactory.initElements(driver,SetDriverConfig.class);
+			driver = setDriver.getDriver(BROWSER);	
+			setDriver.launchBroswer(scriptproperties);
+			logIn = PageFactory.initElements(driver,LoginPage.class);
+			String userId = scriptproperties.getProperty("SCM_LOGIN_USERNAME");
+			String passWord = scriptproperties.getProperty("SCM_LOGIN_PASSWORD");
+			logIn.ClickOnlogIn(userId, passWord);
+
+	} */
+	@BeforeMethod(enabled=true)
+		public void launchAndLogin() throws Exception {
+		try{
+				if (driver==null){		
+				ConfigFIS = new FileInputStream(".\\scm.properties");
+				scriptproperties = new Properties();
+				scriptproperties.load(ConfigFIS);
+				String URI = scriptproperties.getProperty("APP_URL");
+				BROWSER=scriptproperties.getProperty("TestNG_LineDetailDisplay_BROWSERTYPE");
+		        threadDriver = new ThreadLocal<RemoteWebDriver>();
+		        DesiredCapabilities dc = new DesiredCapabilities();
+		        if(BROWSER.equalsIgnoreCase("IE")){
+		        	dc= DesiredCapabilities.internetExplorer();
+		        	dc.setBrowserName("internet explorer"); 
+		        	dc.setPlatform(org.openqa.selenium.Platform.VISTA);
+		        	//InternetExplorerProfile fp = new InternetExplorerDriverService();
+		        	//	dc.setCapability(InternetExplorerDriver., fp);
+		        	//	dc.setBrowserName(DesiredCapabilities.internetExplorer()).getBrowserName());
+				} else if (BROWSER.equalsIgnoreCase("GC")) {
+		        	dc= DesiredCapabilities.chrome();
+		        	dc.setBrowserName("chrome"); 
+		        	dc.setPlatform(org.openqa.selenium.Platform.VISTA);	      		
+					//FirefoxProfile fp = new FirefoxProfile();
+	        		//dc.setCapability(FirefoxDriver.PROFILE, fp);
+	        		//dc.setBrowserName(DesiredCapabilities.firefox().getBrowserName());
+				} else {
+		        	dc= DesiredCapabilities.firefox();
+		        	dc.setBrowserName("firefox"); 
+		        	dc.setPlatform(org.openqa.selenium.Platform.VISTA);
+					//FirefoxProfile fp = new FirefoxProfile();
+	        		//dc.setCapability(FirefoxDriver.PROFILE, fp);
+	        		//dc.setBrowserName(DesiredCapabilities.firefox().getBrowserName());					
+				}
+		        threadDriver.set(new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), dc));		
+				driver = threadDriver.get();
+		        driver.get(URI);
+		        driver.manage().window().maximize();
+				String SELENIUMWAITTIME = scriptproperties.getProperty("DRIVERWAITTIME");
+				Integer SECONDS = new Integer(SELENIUMWAITTIME);
+				driver.manage().timeouts().implicitlyWait(SECONDS, TimeUnit.SECONDS);		
+				logIn = PageFactory.initElements(driver,LoginPage.class);
+				String userId = scriptproperties.getProperty("SCM_LOGIN_USERNAME");
+				String passWord = scriptproperties.getProperty("SCM_LOGIN_PASSWORD");
+				logIn.ClickOnlogIn(userId, passWord);
+			}else{
+				homePage = PageFactory.initElements(driver,HomePage.class);
+				homePage.clickOnResetButton();
+				homePage.clickHomeButton();
+			}	
+		} catch(Exception e){
+				e.printStackTrace();
+		}
+	}	
+	@AfterClass(enabled=true)
+	public void logout() throws Exception {
+		driver.quit();
+	}
+
+	@Test(enabled=true, priority=5,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_0(String testString) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			Assert.assertTrue(homePage.validatehomepagedispay(), "failed to validate Homepage display");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}
+
+	@Test(enabled=true, priority=10,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_1(String custName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			custFacet = PageFactory.initElements(driver,CustomerFacet.class);
+			custFacet.clickCustomerIcon();
+			custFacet.enterCustomerName(custName);			
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			LineDetailsPage.clickonFirstContractandValidate();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}		
+	@Test(enabled=true, priority=15,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_2(String testSrring) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.validatehomepagedispay();
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			Assert.assertEquals(LineDetailsPage.customerButtonhovertext(),"Customer","Failed to validate hover text of Customer");
+			Assert.assertEquals(LineDetailsPage.saleschannelButtonhovertext() ,"Sales Channel",  "Failed to validate hover text of Sales Channel");
+			Assert.assertEquals(LineDetailsPage.installsiteCustButtonhovertext() ,"Install Site Customer",  "Failed to validate hover text of Install Site Customer");
+			Assert.assertEquals(LineDetailsPage.addressButtonhovertext() ,"Address",  "Failed to validate hover text of Address");
+			Assert.assertEquals(LineDetailsPage.datesearchButtonhovertext(),"Date Search",  "Failed to validate hover text of Date Search");
+			Assert.assertEquals(LineDetailsPage.linestatusButtonhovertext() ,"Line Status",  "Failed to validate hover text of Line Status");
+			Assert.assertEquals(LineDetailsPage.allRunButtonhovertext() ,"Run Search",  "Failed to validate hover text of All Search");
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}
+	@Test(enabled=true, priority=20,dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_4(String testSrring) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			LineDetailsPage.clickonFirstContractandValidate();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}
+	@Test(enabled=true, priority=25, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_6(String InstallsiteCustName) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			siteCustomerFacet = PageFactory.initElements(driver, InstallSiteCustomerFacet.class);
+			siteCustomerFacet.clickInstallSiteCustomerIcon();
+			siteCustomerFacet.enterinstallsiteCustName(InstallsiteCustName);
+			siteCustomerFacet.addInstallSiteCusttoSearch();
+			siteCustomerFacet.closeInstallSiteCustFacet();		
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("Site Name"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}	
+	}	
+
+	@Test(enabled=true, priority=30, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_7(String custAddress) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			addressCustFacet = PageFactory.initElements(driver, AddressFacet.class);
+			addressCustFacet.clickAddressIcon();
+			addressCustFacet.enterAddress(custAddress);
+			addressCustFacet.addAddresstoSearch();
+			addressCustFacet.closeAddressFacet();	
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("Site Address"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}	
+	}	
+	@Test(enabled=true, priority=35, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_8(String custCity) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			addressCustFacet = PageFactory.initElements(driver, AddressFacet.class);
+			addressCustFacet.clickAddressIcon();
+			addressCustFacet.enterAddress(custCity);
+			addressCustFacet.addAddresstoSearch();
+			addressCustFacet.closeAddressFacet();	
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("City"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}	
+	}
+	@Test(enabled=true, priority=40, dataProvider="getData", dataProviderClass=GetInputData.class)
+	public void LineAndDetailDisplay_1_9(String custCountry) throws Exception{
+		boolean status=true;
+		String err_msg="";
+		try{
+			addressCustFacet = PageFactory.initElements(driver, AddressFacet.class);
+			addressCustFacet.clickAddressIcon();
+			addressCustFacet.enterAddress(custCountry);
+			addressCustFacet.addAddresstoSearch();
+			addressCustFacet.closeAddressFacet();	
+			LineDetailsPage = PageFactory.initElements(driver,LineDetails.class);
+			LineDetailsPage.clickonAllsearchButton();
+			searchResultsPage = PageFactory.initElements(driver,SearchResults.class);
+			Assert.assertTrue(searchResultsPage.validateWordWrapping("Country"), "Wordwrap validation failed");
+			homePage = PageFactory.initElements(driver,HomePage.class);
+			homePage.clickOnResetButton();
+		}catch(Throwable  a){
+			status = false;
+			err_msg = a.getMessage();
+		} finally{
+			String methodname=Thread.currentThread().getStackTrace()[1].getMethodName();
+			GetInputData.updateResultExcel(status,err_msg, methodname);
+			if(!status) {
+				driver.quit();driver=null;
+				throw new Exception(err_msg);
+			}
+		}
+	}	
+}
