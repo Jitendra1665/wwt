@@ -4,11 +4,32 @@
 	<groupId>wwt</groupId>
 	<artifactId>wwt</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	  <name>GitHub Maven Plugin Example</name>
+        <description>Project to demonstrate GitHub Maven plugins</description>
+        <url>https://github.com/Jitendra1665/wwt</url>
+
+        <issueManagement>
+                <url>https://github.com/Jitendra1665/wwt/include</url>
+                <system>GitHub Issues</system>
+        </issueManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>2.25.0</version>
+		</dependency>
+
+		<dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-firefox-driver</artifactId>
+        <version>2.25.0</version>
+    </dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
 		</dependency>
 
 		<dependency>
@@ -41,6 +62,8 @@
 			<version>1.7.5</version>
 		</dependency>
 
+
+
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -65,14 +88,14 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<distributionManagement>
-  		<repository>
-   			<id>internal.repo</id>
-    		<name>Internal Repository1</name>
-    		<url>git@github.com:Jitendra1665/wwt.git</url>
-  		</repository>
+		<repository>
+			<id>internal.repo</id>
+			<name>Internal Repository1</name>
+			<url>git@github.com:Jitendra1665/wwt.git</url>
+		</repository>
 	</distributionManagement>
-	
-	
+
+
 </project>

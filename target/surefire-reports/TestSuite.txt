@@ -1,4 +1,13 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 82.438 sec - in TestSuite
+Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 55.15 sec <<< FAILURE! - in TestSuite
+LineAndDetailDisplay_2_2(com.wwt.scm.TestNG_ExtUserSearchFilterDriver)  Time elapsed: 0.977 sec  <<< FAILURE!
+java.lang.NullPointerException: null
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.updateResults(TestNG_ExtUserSearchFilterDriver.java:660)
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.LineAndDetailDisplay_2_2(TestNG_ExtUserSearchFilterDriver.java:544)
+
+afterTest(com.wwt.scm.TestNG_ExtUserSearchFilterDriver)  Time elapsed: 1.391 sec  <<< FAILURE!
+java.lang.NullPointerException: null
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.afterTest(TestNG_ExtUserSearchFilterDriver.java:61)
+

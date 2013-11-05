@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="TestSuite" time="43.992" tests="1" errors="0" skipped="0" failures="0">
+<testsuite name="TestSuite" time="2.368" tests="2" errors="0" skipped="0" failures="2">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="D:\SoftwareInstallers\JAVA\jre\bin"/>
@@ -25,7 +25,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 7"/>
-    <property name="classworlds.conf" value="D:\SeleniumWorkFolder\Maven Projects\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf5189551783164650314.tmp"/>
+    <property name="classworlds.conf" value="D:\SeleniumWorkFolder\Maven Projects\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf135250669903254495.tmp"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
     <property name="java.library.path" value="D:\SoftwareInstallers\JAVA\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;D:/SoftwareInstallers/JAVA/bin/../jre/bin/server;D:/SoftwareInstallers/JAVA/bin/../jre/bin;D:/SoftwareInstallers/JAVA/bin/../jre/lib/amd64;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;D:\groovy-2.1.7\bin;D:\SoftwareInstallers\JAVA\bin;C:\Program Files (x86)\HP\Unified Functional Testing\bin; D:\SoftwareInstallers\apache-ant-1.9.2\bin;D:\SoftwareInstallers\apache-maven-3.1.1\\bin;C:\Program Files\TortoiseGit\bin;D:\SoftwareInstallers\Eclipse Installation\eclipse;;C:\Program Files (x86)\HP\Unified Functional Testing\\bin64;C:\Program Files (x86)\HP\Unified Functional Testing\\bin64;C:\Program Files (x86)\HP\Unified Functional Testing\\bin64;."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -60,5 +60,189 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase name="LineAndDetailDisplay_2_2" classname="com.wwt.scm.TestNG_ExtUserSearchFilterDriver" time="43.992"/>
+  <testcase name="LineAndDetailDisplay_2_2" classname="com.wwt.scm.TestNG_ExtUserSearchFilterDriver" time="0.977">
+    <failure type="java.lang.NullPointerException:">java.lang.NullPointerException: null
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.updateResults(TestNG_ExtUserSearchFilterDriver.java:660)
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.LineAndDetailDisplay_2_2(TestNG_ExtUserSearchFilterDriver.java:544)
+</failure>
+    <system-out><![CDATA[Started Test Case - LineAndDetailDisplay_2_2() 
+]]></system-out>
+    <system-err><![CDATA[org.openqa.selenium.firefox.NotConnectedException: Unable to connect to host 127.0.0.1 on port 7055 after 45000 ms. Firefox console output:
+*** LOG addons.manager: Application has been upgraded
+*** LOG addons.xpi: startup
+*** LOG addons.xpi: Skipping unavailable install location app-system-local
+*** LOG addons.xpi: Skipping unavailable install location app-system-share
+*** LOG addons.xpi: Ignoring file entry whose name is not a valid add-on ID: C:\Users\jnandana\AppData\Local\Temp\anonymous2246590563932364894webdriver-profile\extensions\webdriver-staging
+*** LOG addons.xpi: checkForChanges
+*** LOG addons.xpi-utils: Opening database
+*** LOG addons.xpi-utils: Creating database schema
+*** LOG addons.xpi: New add-on fxdriver@googlecode.com installed in app-profile
+*** LOG addons.xpi: New add-on {9F17B1A2-7317-49ef-BCB7-7BB47BDE10F8} installed in winreg-app-user
+*** LOG addons.xpi: New add-on {972ce4c6-7e08-4474-a285-3208198ce6fd} installed in app-global
+*** LOG addons.xpi: New add-on {9F17B1A2-7317-49ef-BCB7-7BB47BDE10F8} installed in winreg-app-global
+*** LOG addons.xpi: Updating database with changes to installed add-ons
+*** LOG addons.xpi-utils: Updating add-on states
+*** LOG addons.xpi-utils: Writing add-ons list
+*** LOG addons.manager: shutdown
+*** LOG addons.xpi: shutdown
+*** LOG addons.xpi-utils: shutdown
+*** LOG addons.xpi-utils: Database closed
+*** LOG addons.xpi: startup
+*** LOG addons.xpi: Skipping unavailable install location app-system-local
+*** LOG addons.xpi: Skipping unavailable install location app-system-share
+*** LOG addons.xpi: Ignoring file entry whose name is not a valid add-on ID: C:\Users\jnandana\AppData\Local\Temp\anonymous2246590563932364894webdriver-profile\extensions\webdriver-staging
+*** LOG addons.xpi: checkForChanges
+*** LOG addons.xpi: No changes found
+JavaScript error: chrome://browser/content/urlbarBindings.xml, line 654: aUrl is undefined
+*** LOG addons.manager: shutdown
+*** LOG addons.xpi: shutdown
+
+	at org.openqa.selenium.firefox.internal.NewProfileExtensionConnection.start(NewProfileExtensionConnection.java:109)
+	at org.openqa.selenium.firefox.FirefoxDriver.startClient(FirefoxDriver.java:245)
+	at org.openqa.selenium.remote.RemoteWebDriver.<init>(RemoteWebDriver.java:109)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:183)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:178)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:174)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:92)
+	at com.wwt.scm.SetDriverConfig.getDriver(SetDriverConfig.java:29)
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.launchAndLogin(TestNG_ExtUserSearchFilterDriver.java:99)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeConfigurationMethod(Invoker.java:564)
+	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:213)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:653)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:217)
+	at org.apache.maven.surefire.testng.TestNGXmlTestSuite.execute(TestNGXmlTestSuite.java:84)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:92)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+org.openqa.selenium.WebDriverException: Failed to connect to binary FirefoxBinary(C:\Program Files (x86)\Mozilla Firefox\firefox.exe) on port 7055; process output follows: 
+*** LOG addons.manager: Application has been upgraded
+*** LOG addons.xpi: startup
+*** LOG addons.xpi: Skipping unavailable install location app-system-local
+*** LOG addons.xpi: Skipping unavailable install location app-system-share
+*** LOG addons.xpi: Ignoring file entry whose name is not a valid add-on ID: C:\Users\jnandana\AppData\Local\Temp\anonymous2246590563932364894webdriver-profile\extensions\webdriver-staging
+*** LOG addons.xpi: checkForChanges
+*** LOG addons.xpi-utils: Opening database
+*** LOG addons.xpi-utils: Creating database schema
+*** LOG addons.xpi: New add-on fxdriver@googlecode.com installed in app-profile
+*** LOG addons.xpi: New add-on {9F17B1A2-7317-49ef-BCB7-7BB47BDE10F8} installed in winreg-app-user
+*** LOG addons.xpi: New add-on {972ce4c6-7e08-4474-a285-3208198ce6fd} installed in app-global
+*** LOG addons.xpi: New add-on {9F17B1A2-7317-49ef-BCB7-7BB47BDE10F8} installed in winreg-app-global
+*** LOG addons.xpi: Updating database with changes to installed add-ons
+*** LOG addons.xpi-utils: Updating add-on states
+*** LOG addons.xpi-utils: Writing add-ons list
+*** LOG addons.manager: shutdown
+*** LOG addons.xpi: shutdown
+*** LOG addons.xpi-utils: shutdown
+*** LOG addons.xpi-utils: Database closed
+*** LOG addons.xpi: startup
+*** LOG addons.xpi: Skipping unavailable install location app-system-local
+*** LOG addons.xpi: Skipping unavailable install location app-system-share
+*** LOG addons.xpi: Ignoring file entry whose name is not a valid add-on ID: C:\Users\jnandana\AppData\Local\Temp\anonymous2246590563932364894webdriver-profile\extensions\webdriver-staging
+*** LOG addons.xpi: checkForChanges
+*** LOG addons.xpi: No changes found
+JavaScript error: chrome://browser/content/urlbarBindings.xml, line 654: aUrl is undefined
+*** LOG addons.manager: shutdown
+*** LOG addons.xpi: shutdown
+
+Build info: version: '2.25.0', revision: '17482', time: '2012-07-18 22:18:01'
+System info: os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.7.0_25'
+Driver info: driver.version: TestNG_ExtUserSearchFilterDriver
+	at org.openqa.selenium.firefox.internal.NewProfileExtensionConnection.start(NewProfileExtensionConnection.java:121)
+	at org.openqa.selenium.firefox.FirefoxDriver.startClient(FirefoxDriver.java:245)
+	at org.openqa.selenium.remote.RemoteWebDriver.<init>(RemoteWebDriver.java:109)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:183)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:178)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:174)
+	at org.openqa.selenium.firefox.FirefoxDriver.<init>(FirefoxDriver.java:92)
+	at com.wwt.scm.SetDriverConfig.getDriver(SetDriverConfig.java:29)
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.launchAndLogin(TestNG_ExtUserSearchFilterDriver.java:99)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeConfigurationMethod(Invoker.java:564)
+	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:213)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:653)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:901)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1231)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:767)
+	at org.testng.TestRunner.run(TestRunner.java:617)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:329)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:291)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:240)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1198)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1123)
+	at org.testng.TestNG.run(TestNG.java:1031)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:217)
+	at org.apache.maven.surefire.testng.TestNGXmlTestSuite.execute(TestNGXmlTestSuite.java:84)
+	at org.apache.maven.surefire.testng.TestNGProvider.invoke(TestNGProvider.java:92)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:200)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:153)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+Caused by: org.openqa.selenium.firefox.NotConnectedException: Unable to connect to host 127.0.0.1 on port 7055 after 45000 ms. Firefox console output:
+*** LOG addons.manager: Application has been upgraded
+*** LOG addons.xpi: startup
+*** LOG addons.xpi: Skipping unavailable install location app-system-local
+*** LOG addons.xpi: Skipping unavailable install location app-system-share
+*** LOG addons.xpi: Ignoring file entry whose name is not a valid add-on ID: C:\Users\jnandana\AppData\Local\Temp\anonymous2246590563932364894webdriver-profile\extensions\webdriver-staging
+*** LOG addons.xpi: checkForChanges
+*** LOG addons.xpi-utils: Opening database
+*** LOG addons.xpi-utils: Creating database schema
+*** LOG addons.xpi: New add-on fxdriver@googlecode.com installed in app-profile
+*** LOG addons.xpi: New add-on {9F17B1A2-7317-49ef-BCB7-7BB47BDE10F8} installed in winreg-app-user
+*** LOG addons.xpi: New add-on {972ce4c6-7e08-4474-a285-3208198ce6fd} installed in app-global
+*** LOG addons.xpi: New add-on {9F17B1A2-7317-49ef-BCB7-7BB47BDE10F8} installed in winreg-app-global
+*** LOG addons.xpi: Updating database with changes to installed add-ons
+*** LOG addons.xpi-utils: Updating add-on states
+*** LOG addons.xpi-utils: Writing add-ons list
+*** LOG addons.manager: shutdown
+*** LOG addons.xpi: shutdown
+*** LOG addons.xpi-utils: shutdown
+*** LOG addons.xpi-utils: Database closed
+*** LOG addons.xpi: startup
+*** LOG addons.xpi: Skipping unavailable install location app-system-local
+*** LOG addons.xpi: Skipping unavailable install location app-system-share
+*** LOG addons.xpi: Ignoring file entry whose name is not a valid add-on ID: C:\Users\jnandana\AppData\Local\Temp\anonymous2246590563932364894webdriver-profile\extensions\webdriver-staging
+*** LOG addons.xpi: checkForChanges
+*** LOG addons.xpi: No changes found
+JavaScript error: chrome://browser/content/urlbarBindings.xml, line 654: aUrl is undefined
+*** LOG addons.manager: shutdown
+*** LOG addons.xpi: shutdown
+
+	at org.openqa.selenium.firefox.internal.NewProfileExtensionConnection.start(NewProfileExtensionConnection.java:109)
+	... 37 more
+]]></system-err>
+  </testcase>
+  <testcase name="afterTest" classname="com.wwt.scm.TestNG_ExtUserSearchFilterDriver" time="1.391">
+    <failure type="java.lang.NullPointerException:">java.lang.NullPointerException: null
+	at com.wwt.scm.TestNG_ExtUserSearchFilterDriver.afterTest(TestNG_ExtUserSearchFilterDriver.java:61)
+</failure>
+  </testcase>
 </testsuite>
