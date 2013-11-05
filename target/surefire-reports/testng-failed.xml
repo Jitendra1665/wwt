@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="0" name="Failed suite [WWT SCM Test Suite]">
+  <test name="WWT SCM ExtUserSearchFilterDriver(failed)">
+    <classes>
+      <class name="com.wwt.scm.TestNG_ExtUserSearchFilterDriver">
+        <methods>
+          <include name="launchAndLogin"/>
+          <include name="afterTest"/>
+          <include name="LineAndDetailDisplay_2_2" invocation-numbers="0"/>
+        </methods>
+      </class> <!-- com.wwt.scm.TestNG_ExtUserSearchFilterDriver -->
+    </classes>
+  </test> <!-- WWT SCM ExtUserSearchFilterDriver(failed) -->
+</suite> <!-- Failed suite [WWT SCM Test Suite] -->
